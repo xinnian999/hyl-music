@@ -6,7 +6,8 @@
     "build": "umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "deploy": "yarn build && node ./deploy.js"
   },
   "dependencies": {
     "antd-mobile": "^5.27.0",
