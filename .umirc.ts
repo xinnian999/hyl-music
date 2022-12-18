@@ -16,4 +16,6 @@ export default defineConfig({
     { path: "/artist", component: "./artist" },
     { path: "/search", component: "./search" },
   ],
+  title: "hyl-music",
+  outputPath: "hyl-music",
 });

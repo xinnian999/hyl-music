@@ -2,7 +2,7 @@ import { history, Outlet, useLocation } from "umi";
 import { Provider } from "react-redux";
 import { TabBar } from "antd-mobile";
 import "./index.less";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { store, persistor } from "@/store";
 import { PersistGate } from "redux-persist/integration/react";
 import Footer from "./Footer";
@@ -26,6 +26,10 @@ export default function Layout() {
   const location = useLocation();
   const [activeKey, setActiveKey] = useState(location.pathname);
 
+  useEffect(() => {
+    setActiveKey(location.pathname);
+  }, [location.pathname]);
+
   return (
     <>
       <Provider store={store}>
@@ -35,7 +39,6 @@ export default function Layout() {
             activeKey={activeKey}
             onChange={(key) => {
               history.push(key);
-              setActiveKey(key);
             }}
           >
             {tabs.map((item) => (

@@ -1,6 +1,7 @@
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
 import { request } from "@/utils";
+import { Avatar } from "antd-mobile";
 
 export default function Footer() {
   const { store, dispatch } = useRedux();
@@ -30,7 +31,7 @@ export default function Footer() {
 
   return (
     <div className="audioBar">
-      <img className="avatar" src={ing.pic}></img>
+      <img className="avatar" src={ing.pic} />
       <div className="info">
         <span>{ing.name}</span> -{" "}
         <span>{ing.ar ? getArtist(ing.ar) : getArtist(ing.artists)}</span>

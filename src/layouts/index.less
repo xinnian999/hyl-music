@@ -15,17 +15,17 @@
   z-index: 99999999;
 }
 .adm-tab-bar-wrap {
-  min-height: 40px;
-  justify-content: space-around;
+  min-height: 40px !important;
+  justify-content: space-around !important;
 }
 .adm-tab-bar-item {
-  flex: none;
+  flex: none !important;
 }
 .adm-tab-bar-item-title {
-  font-size: 15px;
+  font-size: 15px !important;
 }
 .adm-tab-bar-item-active {
-  color: #dd001b;
+  color: #dd001b !important;
   &::after {
     content: "";
     position: absolute;
@@ -61,6 +61,8 @@
     border: 1px solid #999;
     margin-left: 15px;
     animation: play 5s linear infinite;
+    width: 35px;
+    height: 35px;
   }
   .info {
     margin-left: 15px;
@@ -68,7 +70,7 @@
   }
 
   .iconfont {
-    font-size: 20px;
+    font-size: 30px;
     position: absolute;
     right: 20px;
     top: 50%;
