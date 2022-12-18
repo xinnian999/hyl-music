@@ -1,3 +1,4 @@
 import Banner from "./Banner";
+import PlayList from "./PlayList";
 
-export { Banner };
+export { Banner, PlayList };

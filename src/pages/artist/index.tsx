@@ -1,8 +1,12 @@
 import { Banner, PlayList } from "@/components";
+import { List } from "antd-mobile";
 import { useMount } from "@/hooks";
 import { request } from "@/utils";
 import { useState } from "react";
+import classnames from "classnames";
 import "./index.less";
+
+const audio = new Audio();
 
 const DocsPage = () => {
   const [data, setData] = useState([]);
@@ -14,10 +18,23 @@ const DocsPage = () => {
       });
   });
 
+  const getArtist = (data) => {
+    if (data.length < 2) return data[0].name;
+
+    return data.reduce((item, str) => {
+      return str.name + ` / ${item.name}`;
+    });
+  };
+
+  const play = async (id: number) => {
+    const res = await request.get("/song/url", { params: { id } });
+    audio.src = res.data[0].url;
+    audio.play();
+  };
+
   return (
     <div id="hot">
-      <Banner title="热门歌曲" />
-      <PlayList dataSource={data} />
+      <Banner title="歌手" />
     </div>
   );
 };

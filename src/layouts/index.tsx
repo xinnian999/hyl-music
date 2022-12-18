@@ -1,56 +1,44 @@
-import { history, Outlet } from "umi";
-import { Badge, TabBar } from "antd-mobile";
-import {
-  AppOutline,
-  MessageOutline,
-  MessageFill,
-  UnorderedListOutline,
-  UserOutline,
-} from "antd-mobile-icons";
-import styles from "./index.less";
+import { history, Outlet, useLocation } from "umi";
+import { TabBar } from "antd-mobile";
+import "./index.less";
 import { useState } from "react";
 
 const tabs = [
   {
     key: "/hot",
-    title: "热门歌曲",
-    icon: <AppOutline />,
+    title: "热门",
+  },
+  {
+    key: "/artist",
+    title: "歌手",
   },
   {
     key: "/search",
     title: "搜索",
-    icon: <UnorderedListOutline />,
   },
 ];
 
 export default function Layout() {
-  const [activeKey, setActiveKey] = useState("todo");
+  const location = useLocation();
+  const [activeKey, setActiveKey] = useState(location.pathname);
 
   return (
-    <div>
-      {/* <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/docs">Docs</Link>
-        </li>
-        <li>
-          <a href="https://github.com/umijs/umi">Github</a>
-        </li>
-      </ul> */}
-      <Outlet />
-
+    <>
       <TabBar
-        className={styles.navs}
+        className="navs"
+        activeKey={activeKey}
         onChange={(key) => {
           history.push(key);
+          setActiveKey(key);
         }}
       >
         {tabs.map((item) => (
-          <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
+          <TabBar.Item key={item.key} title={item.title} />
         ))}
       </TabBar>
-    </div>
+      <div className="main">
+        <Outlet />
+      </div>
+    </>
   );
 }

@@ -10,4 +10,10 @@ export default defineConfig({
     },
   },
   mfsu: false,
+  routes: [
+    { path: "/", redirect: "/hot" },
+    { path: "/hot", component: "./hot" },
+    { path: "/artist", component: "./artist" },
+    { path: "/search", component: "./search" },
+  ],
 });

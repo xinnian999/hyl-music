@@ -1,4 +1,4 @@
-@import url("//at.alicdn.com/t/c/font_2900696_tfb733f7pqh.css");
+@import url("//at.alicdn.com/t/c/font_2900696_o0xemog11j9.css");
 
 * {
   margin: 0;
@@ -6,10 +6,40 @@
 }
 
 .navs {
+  height: 40px;
+  border-bottom: 1px solid rgb(212, 209, 209);
   position: fixed;
-  bottom: 0;
-  left: 0;
+  top: 0;
   width: 100%;
-  background-color: aliceblue;
-  border-top: 1px solid #eee;
+  background-color: #fff;
+  z-index: 99999999;
+}
+.adm-tab-bar-wrap {
+  min-height: 40px;
+  justify-content: space-around;
+}
+.adm-tab-bar-item {
+  flex: none;
+}
+.adm-tab-bar-item-title {
+  font-size: 15px;
+}
+.adm-tab-bar-item-active {
+  color: #dd001b;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    z-index: 3;
+    width: 100%;
+    height: 4px;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+    background: #dd001b;
+  }
+}
+
+.main {
+  margin-top: 41px;
 }

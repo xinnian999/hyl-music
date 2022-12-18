@@ -1,0 +1,73 @@
+.PlayList {
+  .iconfont {
+    font-size: 20px;
+  }
+  .index {
+    color: #999;
+  }
+  .top {
+    color: #df3436;
+  }
+  .item {
+    display: flex;
+  }
+  .itemCon {
+    width: 100%;
+  }
+  .artists {
+    color: #999;
+    font-size: 13px;
+  }
+  .ing {
+    color: #df3436;
+  }
+}
+
+.voice-playing {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  /* 底部对齐，实现从下往上的动画效果 */
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.play1 {
+  width: 10px;
+  background-color: #df3436;
+  animation: playing1 1s linear infinite alternate;
+}
+.play2 {
+  width: 10px;
+  background-color: #df3436;
+  animation: playing2 1s linear infinite alternate;
+}
+.play3 {
+  width: 10px;
+  height: 10px;
+  background-color: #df3436;
+  animation: playing3 1s 0.5s linear infinite alternate;
+}
+@keyframes playing1 {
+  0% {
+    height: 10px;
+  }
+  100% {
+    height: 30px;
+  }
+}
+@keyframes playing2 {
+  0% {
+    height: 30px;
+  }
+  100% {
+    height: 10px;
+  }
+}
+@keyframes playing3 {
+  0% {
+    height: 10px;
+  }
+  100% {
+    height: 30px;
+  }
+}
