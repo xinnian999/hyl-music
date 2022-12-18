@@ -3,7 +3,7 @@ import { request } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
 import "./index.less";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 type playListType = {
   dataSource: any[];
@@ -19,7 +19,9 @@ function PlayList({ dataSource }: playListType) {
   const { ing, play } = store;
 
   useEffect(() => {
-    if (!play) return audio.pause();
+    if (!play) {
+      return audio.pause();
+    }
     if (!audio.src) {
       audio.src = ing.src;
     }
@@ -63,44 +65,68 @@ function PlayList({ dataSource }: playListType) {
     };
   };
 
+  const playingBar = (
+    <div className="voice-playing">
+      <div
+        className={classnames("play1", {
+          "animation-stop": !play,
+        })}
+      ></div>
+      <div
+        className={classnames("play2", {
+          "animation-stop": !play,
+        })}
+      ></div>
+      <div
+        className={classnames("play3", {
+          "animation-stop": !play,
+        })}
+      ></div>
+    </div>
+  );
+
+  const goActive = () => {
+    const goElement = document.querySelector(".ing");
+    goElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   return (
-    <List className="PlayList">
-      {dataSource.map((item: any, i) => {
-        return (
-          <List.Item
-            key={item.id}
-            arrow={<span className="iconfont icon-androidgengduo"></span>}
-            prefix={
-              ing.id === item.id ? (
-                <div className="voice-playing">
-                  <div className="play1"></div>
-                  <div className="play2"></div>
-                  <div className="play3"></div>
-                </div>
-              ) : (
-                <div
-                  className={classnames({
-                    index: i + 1 >= 4,
-                    top: i + 1 < 4,
-                  })}
-                >
-                  {i + 1 < 10 ? `0${i + 1}` : i + 1}
-                </div>
-              )
-            }
-            onClick={() => onPlay(item, i)}
-          >
-            <div className={classnames({ ing: ing.id === item.id })}>
-              {item.name}
-            </div>
-            <div className="artists">
-              {item.ar ? getArtist(item.ar) : getArtist(item.artists)} -{" "}
-              {item.name}
-            </div>
-          </List.Item>
-        );
-      })}
-    </List>
+    <>
+      <List className="PlayList">
+        {dataSource.map((item: any, i) => {
+          return (
+            <List.Item
+              key={item.id}
+              arrow={<span className="iconfont icon-androidgengduo"></span>}
+              prefix={
+                ing.id === item.id ? (
+                  playingBar
+                ) : (
+                  <div
+                    className={classnames({
+                      index: i + 1 >= 4,
+                      top: i + 1 < 4,
+                    })}
+                  >
+                    {i + 1 < 10 ? `0${i + 1}` : i + 1}
+                  </div>
+                )
+              }
+              onClick={() => onPlay(item, i)}
+            >
+              <div className={classnames({ ing: ing.id === item.id })}>
+                {item.name}
+              </div>
+              <div className="artists">
+                {item.ar ? getArtist(item.ar) : getArtist(item.artists)} -{" "}
+                {item.name}
+              </div>
+            </List.Item>
+          );
+        })}
+      </List>
+      <span className="iconfont icon-dangqiandingwei" onClick={goActive}></span>
+    </>
   );
 }
 

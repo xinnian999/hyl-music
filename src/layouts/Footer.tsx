@@ -1,7 +1,6 @@
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
 import { request } from "@/utils";
-import { Avatar } from "antd-mobile";
 
 export default function Footer() {
   const { store, dispatch } = useRedux();
@@ -18,12 +17,13 @@ export default function Footer() {
   };
 
   const onplay = () => {
+    if (ing.src) return dispatch({ type: "CHANGE_PlAY", payload: !play });
     request.get("/song/url", { params: { id: ing.id } }).then((res) => {
-      dispatch({ type: "CHANGE_PlAY", payload: !play });
       dispatch({
         type: "CHANGE_ING",
         payload: { ...ing, src: res.data[0].url },
       });
+      dispatch({ type: "CHANGE_PlAY", payload: !play });
     });
   };
 
@@ -31,7 +31,12 @@ export default function Footer() {
 
   return (
     <div className="audioBar">
-      <img className="avatar" src={ing.pic} />
+      <img
+        className={classnames("avatar", {
+          "animation-stop": !play,
+        })}
+        src={ing.pic}
+      />
       <div className="info">
         <span>{ing.name}</span> -{" "}
         <span>{ing.ar ? getArtist(ing.ar) : getArtist(ing.artists)}</span>
