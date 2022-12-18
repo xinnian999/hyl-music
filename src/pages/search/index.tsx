@@ -1,6 +1,6 @@
 import { request, debounce } from "@/utils";
 import { List, SearchBar } from "antd-mobile";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { PlayList } from "@/components";
 import { SearchOutline, ClockCircleFill } from "antd-mobile-icons";
 import "./index.less";
@@ -27,19 +27,22 @@ export default function Search() {
     }
   }, []);
 
-  const getSuggest = debounce(() => {
-    request
-      .get("/search/suggest", {
-        params: { keywords: keywords.current, type: "mobile" },
-      })
-      .then((res: any) => {
-        if (res.code === 200 && res.result?.allMatch) {
-          setSuggestdata(res.result.allMatch);
-        } else {
-          setSuggestdata([]);
-        }
-      });
-  }, 500);
+  const getSuggest = useCallback(
+    debounce(() => {
+      request
+        .get("/search/suggest", {
+          params: { keywords: keywords.current, type: "mobile" },
+        })
+        .then((res: any) => {
+          if (res.code === 200 && res.result?.allMatch) {
+            setSuggestdata(res.result.allMatch);
+          } else {
+            setSuggestdata([]);
+          }
+        });
+    }, 500),
+    []
+  );
 
   const onChange = (val: string) => {
     setValue(val);
@@ -88,6 +91,7 @@ export default function Search() {
                 return (
                   <div
                     className="hotSearch-item"
+                    key={item.first}
                     onClick={() => {
                       keywords.current = item.first;
                       onSearch();
@@ -101,9 +105,10 @@ export default function Search() {
             </div>
           </div>
           <List>
-            {historySearch.reverse().map((item: any) => {
+            {[...new Set(historySearch)].reverse().map((item: any) => {
               return (
                 <List.Item
+                  key={item}
                   prefix={<ClockCircleFill />}
                   onClick={() => {
                     keywords.current = item;
