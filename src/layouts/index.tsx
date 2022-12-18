@@ -1,7 +1,11 @@
 import { history, Outlet, useLocation } from "umi";
+import { Provider } from "react-redux";
 import { TabBar } from "antd-mobile";
 import "./index.less";
 import { useState } from "react";
+import { store, persistor } from "@/store";
+import { PersistGate } from "redux-persist/integration/react";
+import Footer from "./Footer";
 
 const tabs = [
   {
@@ -24,21 +28,27 @@ export default function Layout() {
 
   return (
     <>
-      <TabBar
-        className="navs"
-        activeKey={activeKey}
-        onChange={(key) => {
-          history.push(key);
-          setActiveKey(key);
-        }}
-      >
-        {tabs.map((item) => (
-          <TabBar.Item key={item.key} title={item.title} />
-        ))}
-      </TabBar>
-      <div className="main">
-        <Outlet />
-      </div>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <TabBar
+            className="navs"
+            activeKey={activeKey}
+            onChange={(key) => {
+              history.push(key);
+              setActiveKey(key);
+            }}
+          >
+            {tabs.map((item) => (
+              <TabBar.Item key={item.key} title={item.title} />
+            ))}
+          </TabBar>
+          <div className="main">
+            <Outlet />
+          </div>
+
+          <Footer />
+        </PersistGate>
+      </Provider>
     </>
   );
 }

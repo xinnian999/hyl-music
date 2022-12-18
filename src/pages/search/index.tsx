@@ -13,7 +13,7 @@ export default function Search() {
   };
 
   const onSearch = () => {
-    request.get("/search", { params: { keywords } }).then((res: any) => {
+    request.get("/cloudsearch", { params: { keywords } }).then((res: any) => {
       setData(res.result.songs);
     });
   };

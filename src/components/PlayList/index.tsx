@@ -1,8 +1,9 @@
 import { List } from "antd-mobile";
 import { request } from "@/utils";
+import { useRedux } from "@/hooks";
 import classnames from "classnames";
 import "./index.less";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type playListType = {
   dataSource: any[];
@@ -13,7 +14,18 @@ const audio = new Audio();
 let index = 0;
 
 function PlayList({ dataSource }: playListType) {
-  const [ingItem, setIngItem] = useState({ id: 0, name: "" });
+  const { store, dispatch } = useRedux();
+
+  const { ing, play } = store;
+
+  useEffect(() => {
+    if (!play) return audio.pause();
+    if (!audio.src) {
+      audio.src = ing.src;
+    }
+
+    audio.play();
+  }, [play]);
 
   const getArtist = (data: any[]) => {
     if (data.length < 2) return data[0].name;
@@ -23,21 +35,30 @@ function PlayList({ dataSource }: playListType) {
     });
   };
 
-  const play = async (item: any, i) => {
+  const onPlay = async (item: any, i) => {
     index = i;
-    setIngItem(item);
+    dispatch({
+      type: "CHANGE_ING",
+      payload: { ...item, pic: item.al?.picUrl },
+    });
     const res = await request.get("/song/url", { params: { id: item.id } });
     audio.src = res.data[0].url;
+    dispatch({ type: "CHANGE_PlAY", payload: true });
     audio.play();
+    // audio.currentTime = 180;
     audio.onended = () => {
       index++;
-      setIngItem(dataSource[index]);
-
+      dispatch({
+        type: "CHANGE_ING",
+        payload: { ...dataSource[index], pic: dataSource[index].al?.picUrl },
+      });
       request
         .get("/song/url", { params: { id: dataSource[index].id } })
         .then((result: any) => {
           audio.src = result.data[0].url;
+          dispatch({ type: "CHANGE_PlAY", payload: true });
           audio.play();
+          // audio.currentTime = 240;
         });
     };
   };
@@ -50,7 +71,7 @@ function PlayList({ dataSource }: playListType) {
             key={item.id}
             arrow={<span className="iconfont icon-androidgengduo"></span>}
             prefix={
-              ingItem.id === item.id ? (
+              ing.id === item.id ? (
                 <div className="voice-playing">
                   <div className="play1"></div>
                   <div className="play2"></div>
@@ -67,9 +88,9 @@ function PlayList({ dataSource }: playListType) {
                 </div>
               )
             }
-            onClick={() => play(item, i)}
+            onClick={() => onPlay(item, i)}
           >
-            <div className={classnames({ ing: ingItem.id === item.id })}>
+            <div className={classnames({ ing: ing.id === item.id })}>
               {item.name}
             </div>
             <div className="artists">

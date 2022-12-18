@@ -1,4 +1,4 @@
-@import url("//at.alicdn.com/t/c/font_2900696_o0xemog11j9.css");
+@import url("//at.alicdn.com/t/c/font_2900696_mlvv01gv9ag.css");
 
 * {
   margin: 0;
@@ -42,4 +42,54 @@
 
 .main {
   margin-top: 41px;
+}
+
+.audioBar {
+  width: 100%;
+  height: 50px;
+  padding: 5px;
+  box-sizing: border-box;
+  background-color: rgb(175, 224, 228);
+  border-top: 1px solid #eee;
+  display: flex;
+  position: relative;
+
+  position: fixed;
+  bottom: -1px;
+  .avatar {
+    border-radius: 50%;
+    border: 1px solid #999;
+    margin-left: 15px;
+    animation: play 5s linear infinite;
+  }
+  .info {
+    margin-left: 15px;
+    line-height: 40px;
+  }
+
+  .iconfont {
+    font-size: 20px;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes play {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  25% {
+    -webkit-transform: rotate(90deg);
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+  }
+  75% {
+    -webkit-transform: rotate(270deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }

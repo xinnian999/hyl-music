@@ -5,7 +5,7 @@ type dispatchAll = (dispatchData: { type: string; payload: any }[]) => void;
 
 type useReduxResult = {
   store: isStore;
-  dispatch: (props: object) => void;
+  dispatch: (props: any) => void;
   dispatchAll: dispatchAll;
 };
 
