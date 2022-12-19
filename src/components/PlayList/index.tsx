@@ -1,23 +1,20 @@
 import { List } from "antd-mobile";
-import { request } from "@/utils";
+import { useEffect } from "react";
+import { getArtist, request } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
 import "./index.less";
-import { useEffect } from "react";
 
 type playListType = {
   dataSource: any[];
 };
-
-const audio = new Audio();
 
 let index = 0;
 
 function PlayList({ dataSource }: playListType) {
   const { store, dispatch } = useRedux();
 
-  const { ing, play } = store;
-  console.log(ing);
+  const { ing, play, audio } = store;
 
   useEffect(() => {
     if (!play) {
@@ -30,14 +27,6 @@ function PlayList({ dataSource }: playListType) {
     audio.play();
   }, [play]);
 
-  const getArtist = (data: any[]) => {
-    return data
-      .map((item) => item.name)
-      .reduce((item, str) => {
-        return `${item} / ${str}`;
-      });
-  };
-
   const onPlay = async (item: any, i) => {
     index = i;
     const res = await request.get("/song/url", { params: { id: item.id } });
@@ -49,7 +38,7 @@ function PlayList({ dataSource }: playListType) {
     });
     dispatch({ type: "CHANGE_PlAY", payload: true });
     audio.play();
-    // audio.currentTime = 180;
+
     audio.onended = () => {
       index++;
       dispatch({
@@ -69,7 +58,7 @@ function PlayList({ dataSource }: playListType) {
           });
           audio.play();
           dispatch({ type: "CHANGE_PlAY", payload: true });
-          // audio.currentTime = 240;
+          // audio.currentTime = 180;
         });
     };
   };

@@ -6,6 +6,7 @@ import { pick } from "lodash";
 export type isStore = {
   ing: any;
   play: boolean;
+  audio: HTMLAudioElement;
 };
 
 //在localStorge中生成key为root的值
@@ -19,6 +20,7 @@ const reducer = (
   state: isStore = {
     ing: { id: 0, name: "", ar: [], pic: "" },
     play: false,
+    audio: new Audio(),
   },
   { type, payload }: any
 ) => {
@@ -30,6 +32,8 @@ const reducer = (
       };
     case "CHANGE_PlAY":
       return { ...state, play: payload };
+    case "CHANGE_AUDIO":
+      return { ...state, audio: payload };
     default:
       return state;
   }

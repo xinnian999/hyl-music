@@ -1,33 +1,17 @@
-import { useRedux } from "@/hooks";
+import { useMount, useRedux } from "@/hooks";
+import { getArtist } from "@/utils";
 import classnames from "classnames";
-import { request } from "@/utils";
 
-export default function Footer() {
+export default function AudioBar() {
   const { store, dispatch } = useRedux();
 
   const { ing, play } = store;
 
-  const getArtist = (data: any[]) => {
-    return data
-      .map((item) => item.name)
-      .reduce((item, str) => {
-        return `${item} / ${str}`;
-      });
-  };
+  useMount(() => {
+    dispatch({ type: "CHANGE_AUDIO", payload: new Audio() });
+  });
 
   const onplay = () => {
-    // if (ing.src) return dispatch({ type: "CHANGE_PlAY", payload: !play });
-    // request.get("/song/url", { params: { id: ing.id } }).then((res) => {
-    //   dispatch({
-    //     type: "CHANGE_ING",
-    //     payload: { ...ing, src: res.data[0].url },
-    //   });
-    //   dispatch({ type: "CHANGE_PlAY", payload: !play });
-    // });
-    // audio.src = ing.url;
-
-    // audio.play();
-
     dispatch({ type: "CHANGE_PlAY", payload: !play });
   };
 

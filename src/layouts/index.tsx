@@ -5,7 +5,7 @@ import "./index.less";
 import { useEffect, useState } from "react";
 import { store, persistor } from "@/store";
 import { PersistGate } from "redux-persist/integration/react";
-import Footer from "./Footer";
+import AudioBar from "./AudioBar";
 
 const tabs = [
   {
@@ -49,7 +49,7 @@ export default function Layout() {
             <Outlet />
           </div>
 
-          <Footer />
+          <AudioBar />
         </PersistGate>
       </Provider>
     </>
