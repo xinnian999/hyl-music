@@ -1,6 +1,7 @@
 import { createStore } from "redux";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { pick } from "lodash";
 
 export type isStore = {
   ing: any;
@@ -23,7 +24,10 @@ const reducer = (
 ) => {
   switch (type) {
     case "CHANGE_ING":
-      return { ...state, ing: payload };
+      return {
+        ...state,
+        ing: pick(payload, ["id", "name", "url", "al", "ar", "time"]),
+      };
     case "CHANGE_PlAY":
       return { ...state, play: payload };
     default:

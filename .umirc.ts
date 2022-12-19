@@ -16,6 +16,7 @@ export default defineConfig({
     { path: "/artist", component: "./artist" },
     { path: "/search", component: "./search" },
   ],
-  title: "hyl-music",
+  title: "小琳音乐站",
   outputPath: "hyl-music",
+  links: [{ href: "/music.webp", rel: "icon" }],
 });

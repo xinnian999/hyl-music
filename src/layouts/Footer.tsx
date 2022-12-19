@@ -8,23 +8,27 @@ export default function Footer() {
   const { ing, play } = store;
 
   const getArtist = (data: any[]) => {
-    if (!data.length) return;
-    if (data.length < 2) return data[0].name;
-
-    return data.reduce((item, str) => {
-      return str.name + ` / ${item.name}`;
-    });
+    return data
+      .map((item) => item.name)
+      .reduce((item, str) => {
+        return `${item} / ${str}`;
+      });
   };
 
   const onplay = () => {
-    if (ing.src) return dispatch({ type: "CHANGE_PlAY", payload: !play });
-    request.get("/song/url", { params: { id: ing.id } }).then((res) => {
-      dispatch({
-        type: "CHANGE_ING",
-        payload: { ...ing, src: res.data[0].url },
-      });
-      dispatch({ type: "CHANGE_PlAY", payload: !play });
-    });
+    // if (ing.src) return dispatch({ type: "CHANGE_PlAY", payload: !play });
+    // request.get("/song/url", { params: { id: ing.id } }).then((res) => {
+    //   dispatch({
+    //     type: "CHANGE_ING",
+    //     payload: { ...ing, src: res.data[0].url },
+    //   });
+    //   dispatch({ type: "CHANGE_PlAY", payload: !play });
+    // });
+    // audio.src = ing.url;
+
+    // audio.play();
+
+    dispatch({ type: "CHANGE_PlAY", payload: !play });
   };
 
   if (!ing.name) return null;
@@ -35,11 +39,10 @@ export default function Footer() {
         className={classnames("avatar", {
           "animation-stop": !play,
         })}
-        src={ing.pic}
+        src={ing.al?.picUrl}
       />
       <div className="info">
-        <span>{ing.name}</span> -{" "}
-        <span>{ing.ar ? getArtist(ing.ar) : getArtist(ing.artists)}</span>
+        <span>{ing.name}</span> - <span>{getArtist(ing.ar)}</span>
       </div>
       <span
         className={classnames("iconfont", {

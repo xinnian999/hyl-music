@@ -17,34 +17,36 @@ function PlayList({ dataSource }: playListType) {
   const { store, dispatch } = useRedux();
 
   const { ing, play } = store;
+  console.log(ing);
 
   useEffect(() => {
     if (!play) {
       return audio.pause();
     }
     if (!audio.src) {
-      audio.src = ing.src;
+      audio.src = ing.url;
     }
 
     audio.play();
   }, [play]);
 
   const getArtist = (data: any[]) => {
-    if (data.length < 2) return data[0].name;
-
-    return data.reduce((item, str) => {
-      return str.name + ` / ${item.name}`;
-    });
+    return data
+      .map((item) => item.name)
+      .reduce((item, str) => {
+        return `${item} / ${str}`;
+      });
   };
 
   const onPlay = async (item: any, i) => {
     index = i;
-    dispatch({
-      type: "CHANGE_ING",
-      payload: { ...item, pic: item.al?.picUrl },
-    });
     const res = await request.get("/song/url", { params: { id: item.id } });
     audio.src = res.data[0].url;
+
+    dispatch({
+      type: "CHANGE_ING",
+      payload: { ...item, ...res.data[0] },
+    });
     dispatch({ type: "CHANGE_PlAY", payload: true });
     audio.play();
     // audio.currentTime = 180;
@@ -52,14 +54,21 @@ function PlayList({ dataSource }: playListType) {
       index++;
       dispatch({
         type: "CHANGE_ING",
-        payload: { ...dataSource[index], pic: dataSource[index].al?.picUrl },
+        payload: dataSource[index],
       });
       request
         .get("/song/url", { params: { id: dataSource[index].id } })
         .then((result: any) => {
           audio.src = result.data[0].url;
-          dispatch({ type: "CHANGE_PlAY", payload: true });
+          dispatch({
+            type: "CHANGE_ING",
+            payload: {
+              ...dataSource[index],
+              ...result.data[0],
+            },
+          });
           audio.play();
+          dispatch({ type: "CHANGE_PlAY", payload: true });
           // audio.currentTime = 240;
         });
     };
@@ -118,8 +127,7 @@ function PlayList({ dataSource }: playListType) {
                 {item.name}
               </div>
               <div className="artists">
-                {item.ar ? getArtist(item.ar) : getArtist(item.artists)} -{" "}
-                {item.name}
+                {getArtist(item.ar)} - {item.al.name}
               </div>
             </List.Item>
           );
