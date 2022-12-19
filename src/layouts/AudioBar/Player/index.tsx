@@ -1,4 +1,4 @@
-import { useRedux } from "@/hooks";
+import { useMount, useRedux } from "@/hooks";
 import { NavBar } from "antd-mobile";
 import classnames from "classnames";
 import ReactDom from "react-dom";
@@ -8,6 +8,12 @@ export default function Player({ onBack }) {
   const { store, dispatch } = useRedux();
 
   const { ing, play } = store;
+
+  useMount(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => (document.body.style.overflow = "auto");
+  });
 
   return ReactDom.createPortal(
     <div className="player-contariner animate__animated  animate__bounceInUp ">
