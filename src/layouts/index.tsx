@@ -1,11 +1,12 @@
 import { history, Outlet, useLocation } from "umi";
 import { Provider } from "react-redux";
 import { TabBar } from "antd-mobile";
-import "./index.less";
 import { useEffect, useState } from "react";
 import { store, persistor } from "@/store";
 import { PersistGate } from "redux-persist/integration/react";
 import AudioBar from "./AudioBar";
+import "animate.css";
+import "./index.less";
 
 const tabs = [
   {
