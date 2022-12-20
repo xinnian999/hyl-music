@@ -7,6 +7,7 @@ import "./index.less";
 import { Icon } from "@/components";
 import { useEffect, useState } from "react";
 import classNames from "classnames";
+import { request } from "@/utils";
 
 type PlayerType = {
   onBack: () => void;
@@ -17,7 +18,7 @@ let timer: any;
 
 export default function Player({ onBack, visible }: PlayerType) {
   const { store, dispatch } = useRedux();
-  const { ing, play, audio, currentTime } = store;
+  const { ing, play, audio, currentTime, list } = store;
   const duration = Math.floor(ing.time / 1000);
 
   useMount(() => {
@@ -44,6 +45,26 @@ export default function Player({ onBack, visible }: PlayerType) {
       dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
       dispatch({ type: "CHANGE_PlAY", payload: false });
       clearInterval(timer);
+
+      const index = list.map((item) => item.id).indexOf(ing.id);
+      dispatch({
+        type: "CHANGE_ING",
+        payload: list[index + 1],
+      });
+      request
+        .get("/song/url", { params: { id: list[index + 1].id } })
+        .then((result: any) => {
+          audio.src = result.data[0].url;
+          dispatch({
+            type: "CHANGE_ING",
+            payload: {
+              ...list[index + 1],
+              ...result.data[0],
+            },
+          });
+          audio.play();
+          dispatch({ type: "CHANGE_PlAY", payload: true });
+        });
     }
   }, [currentTime]);
 
@@ -63,6 +84,10 @@ export default function Player({ onBack, visible }: PlayerType) {
 
     audio.currentTime = time;
     dispatch({ type: "CHANGE_CURRENTTIME", payload: time });
+  };
+
+  const next = () => {
+    dispatch({ type: "CHANGE_CURRENTTIME", payload: duration });
   };
 
   return ReactDom.createPortal(
@@ -108,7 +133,11 @@ export default function Player({ onBack, visible }: PlayerType) {
           <div className="control-center">
             <Icon type="icon-shangyishou" className="control-btn2" />
             <PlayBtn className="control-btn" />
-            <Icon type="icon-xiayishou" className="control-btn2" />
+            <Icon
+              type="icon-xiayishou"
+              className="control-btn2"
+              onClick={next}
+            />
           </div>
           <Icon type="icon-liebiao" className="control-btn3" />
         </div>

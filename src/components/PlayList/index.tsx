@@ -26,29 +26,8 @@ function PlayList({ dataSource }: playListType) {
     });
     dispatch({ type: "CHANGE_PlAY", payload: true });
     dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
+    dispatch({ type: "CHANGE_LIST", payload: dataSource });
     audio.play();
-
-    audio.onended = () => {
-      index++;
-      dispatch({
-        type: "CHANGE_ING",
-        payload: dataSource[index],
-      });
-      request
-        .get("/song/url", { params: { id: dataSource[index].id } })
-        .then((result: any) => {
-          audio.src = result.data[0].url;
-          dispatch({
-            type: "CHANGE_ING",
-            payload: {
-              ...dataSource[index],
-              ...result.data[0],
-            },
-          });
-          audio.play();
-          dispatch({ type: "CHANGE_PlAY", payload: true });
-        });
-    };
   };
 
   const playingBar = (
