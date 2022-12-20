@@ -1,7 +1,8 @@
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { pick } from "lodash";
+import thunk from "redux-thunk";
 
 export type isStore = {
   ing: any;
@@ -14,7 +15,7 @@ export type isStore = {
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["play"], //设置某个reducer数据不持久化，
+  blacklist: ["play", "currentTime"], //设置某个reducer数据不持久化，
 };
 
 const reducer = (
@@ -45,7 +46,7 @@ const reducer = (
 
 const myPersistReducer = persistReducer(persistConfig, reducer);
 
-const store = createStore(myPersistReducer);
+const store = createStore(myPersistReducer, applyMiddleware(thunk));
 
 const persistor = persistStore(store);
 

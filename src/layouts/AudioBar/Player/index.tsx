@@ -17,50 +17,53 @@ let timer: any;
 
 export default function Player({ onBack, visible }: PlayerType) {
   const { store, dispatch } = useRedux();
-  const [current, setCurrent] = useState(0);
-  const { ing, play, audio } = store;
+  const { ing, play, audio, currentTime } = store;
   const duration = Math.floor(ing.time / 1000);
 
   useMount(() => {
-    // document.body.style.overflow = "hidden";
-
-    if (play) {
-      timer = setInterval(() => {
-        setCurrent((current) => {
-          return current + 1;
-        });
-      }, 1000);
+    if (ing.url) {
+      audio.src = ing.url;
     }
-
-    return () => {
-      clearInterval(timer);
-      document.body.style.overflow = "auto";
-    };
   });
 
   useEffect(() => {
     if (!play) {
       clearInterval(timer);
-      return audio.pause();
+      audio.pause();
+      return;
     }
-    if (!audio.src) {
-      audio.src = ing.url;
-    }
+
     timer = setInterval(() => {
-      setCurrent((current) => {
-        return current + 1;
-      });
+      dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
     }, 1000);
     audio.play();
   }, [play]);
 
   useEffect(() => {
-    if (current === duration) {
-      clearInterval(timer);
-      setCurrent(0);
+    if (currentTime >= duration) {
+      dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
       dispatch({ type: "CHANGE_PlAY", payload: false });
+      clearInterval(timer);
     }
-  }, [current]);
+  }, [currentTime]);
+
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [visible]);
+
+  const goProgress = (e) => {
+    const progressBodyEl: any = document.querySelector(".progress-body");
+    const time = Math.floor(
+      (e.nativeEvent.offsetX / progressBodyEl.clientWidth) * duration
+    );
+
+    audio.currentTime = time;
+    dispatch({ type: "CHANGE_CURRENTTIME", payload: time });
+  };
 
   return ReactDom.createPortal(
     <div
@@ -80,18 +83,20 @@ export default function Player({ onBack, visible }: PlayerType) {
         <AlBum className="player-avatar" />
 
         <div className="progress">
-          <span className="current">
-            0{parseInt(String(current / 60))}:
-            {parseInt(String(current / 10)) % 6}
-            {current % 10}
+          <span className="progress-currentTime">
+            0{parseInt(String(currentTime / 60))}:
+            {parseInt(String(currentTime / 10)) % 6}
+            {parseInt(String(currentTime % 10))}
           </span>
-          <div className="body">
+          <div className="progress-body" onClick={goProgress}>
             <div
               className="current-progress"
-              style={{ width: `${(current / duration) * 100}%` }}
-            ></div>
+              style={{ width: `${(currentTime / duration) * 100}%` }}
+            >
+              <span className="current-progress-head"></span>
+            </div>
           </div>
-          <span className="duration">
+          <span className="progress-durationTime">
             0{parseInt(String(duration / 60))}:
             {parseInt(String(duration / 10)) % 6}
             {duration % 10}

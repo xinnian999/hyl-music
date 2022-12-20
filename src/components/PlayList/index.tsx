@@ -1,5 +1,4 @@
 import { List } from "antd-mobile";
-import { useEffect } from "react";
 import { getArtist, request } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
@@ -26,8 +25,9 @@ function PlayList({ dataSource }: playListType) {
       payload: { ...item, ...res.data[0] },
     });
     dispatch({ type: "CHANGE_PlAY", payload: true });
+    dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
     audio.play();
-    // audio.currentTime = 250;
+
     audio.onended = () => {
       index++;
       dispatch({
@@ -47,7 +47,6 @@ function PlayList({ dataSource }: playListType) {
           });
           audio.play();
           dispatch({ type: "CHANGE_PlAY", payload: true });
-          // audio.currentTime = 180;
         });
     };
   };

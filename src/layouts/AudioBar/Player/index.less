@@ -67,21 +67,31 @@
       box-sizing: border-box;
       display: flex;
       align-items: center;
-      .current,
-      .duration {
+      &-currentTime,
+      &-duration {
         padding: 0 5px;
       }
-      .body {
+      &-body {
         flex: 1;
         height: 5px;
         background-color: rgba(0, 0, 0, 0.2);
         line-height: 20px;
         border-radius: 20px;
-        overflow: hidden;
         .current-progress {
           // width: 5%;
           height: 100%;
           background-color: #fff;
+          position: relative;
+          &-head {
+            position: absolute;
+            right: 0;
+            top: 0;
+            transform: translate(50%, -25%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #fff;
+          }
         }
       }
     }
