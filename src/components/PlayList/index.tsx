@@ -16,17 +16,6 @@ function PlayList({ dataSource }: playListType) {
 
   const { ing, play, audio } = store;
 
-  useEffect(() => {
-    if (!play) {
-      return audio.pause();
-    }
-    if (!audio.src) {
-      audio.src = ing.url;
-    }
-
-    audio.play();
-  }, [play]);
-
   const onPlay = async (item: any, i) => {
     index = i;
     const res = await request.get("/song/url", { params: { id: item.id } });
@@ -38,7 +27,7 @@ function PlayList({ dataSource }: playListType) {
     });
     dispatch({ type: "CHANGE_PlAY", payload: true });
     audio.play();
-
+    // audio.currentTime = 250;
     audio.onended = () => {
       index++;
       dispatch({

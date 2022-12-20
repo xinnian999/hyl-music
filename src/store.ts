@@ -7,6 +7,7 @@ export type isStore = {
   ing: any;
   play: boolean;
   audio: HTMLAudioElement;
+  currentTime: number;
 };
 
 //在localStorge中生成key为root的值
@@ -21,6 +22,7 @@ const reducer = (
     ing: { id: 0, name: "", ar: [], pic: "" },
     play: false,
     audio: new Audio(),
+    currentTime: 0,
   },
   { type, payload }: any
 ) => {
@@ -34,6 +36,8 @@ const reducer = (
       return { ...state, play: payload };
     case "CHANGE_AUDIO":
       return { ...state, audio: payload };
+    case "CHANGE_CURRENTTIME":
+      return { ...state, currentTime: payload };
     default:
       return state;
   }

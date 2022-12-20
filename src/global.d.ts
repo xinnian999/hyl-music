@@ -1,0 +1,3 @@
+type classNameType = {
+  className: string;
+};

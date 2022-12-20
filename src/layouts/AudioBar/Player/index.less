@@ -1,20 +1,36 @@
+.visible {
+  top: 0 !important;
+}
+
 .player-contariner {
   height: 100%;
   width: 100%;
   position: fixed;
-  top: 0;
+  top: 100%;
   left: 0;
   z-index: 999999999;
   overflow: hidden;
+  transition: 0.5s all;
   .bg {
-    background-image: url("~@/assets/player-bg.jpg");
     background-repeat: no-repeat;
-    background-size: cover;
-    filter: blur(10px);
+    background-size: auto 100%;
+    background-position: 50%;
+    transform: scale(1.5);
+    transform-origin: center center;
+    filter: blur(30px);
     height: 100%;
-    width: 110%;
-    position: relative;
-    left: -5%;
+    width: 100%;
+    z-index: 999;
+    background: #161824;
+    &::before {
+      content: " ";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
   }
   .player-main {
     width: 100%;
@@ -22,23 +38,78 @@
     position: absolute;
     top: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    z-index: 1;
     color: #fff;
     &-header {
       margin-top: 20px;
     }
 
-    .avatar {
+    .player-avatar {
       border-radius: 50%;
       border: 1px solid #999;
       margin-left: 15px;
-      animation: play 5s linear infinite;
+      animation: play 7s linear infinite;
       width: 200px;
       height: 200px;
       display: block;
       margin: 0 auto;
       margin-top: 20px;
+    }
+
+    .progress {
+      height: 20px;
+      width: 100%;
+
+      position: absolute;
+      bottom: 20%;
+      left: 0;
+      padding: 0 15px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      .current,
+      .duration {
+        padding: 0 5px;
+      }
+      .body {
+        flex: 1;
+        height: 5px;
+        background-color: rgba(0, 0, 0, 0.2);
+        line-height: 20px;
+        border-radius: 20px;
+        overflow: hidden;
+        .current-progress {
+          // width: 5%;
+          height: 100%;
+          background-color: #fff;
+        }
+      }
+    }
+
+    .control {
+      position: absolute;
+      bottom: 10%;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      line-height: 50px;
+      .control-btn {
+        font-size: 50px;
+      }
+      .control-btn2 {
+        font-size: 35px;
+      }
+
+      .control-btn3 {
+        font-size: 25px;
+      }
+
+      .control-center {
+        display: flex;
+        width: 40%;
+        justify-content: space-between;
+      }
     }
   }
 }
