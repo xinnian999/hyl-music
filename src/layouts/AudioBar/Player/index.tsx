@@ -42,7 +42,7 @@ export default function Player({ onBack, visible }: PlayerType) {
 
     timer = setInterval(() => {
       dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
-    }, 1000);
+    }, 500);
     audio.play();
   }, [play]);
 
