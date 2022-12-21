@@ -21,7 +21,7 @@ const DocsPage = () => {
 
   const goArtist = (item) => {
     setCurrentArtist(item);
-    request("/artist/songs", { params: { id: item.id } }).then((res) => {
+    request("/artist/top/song", { params: { id: item.id } }).then((res) => {
       setItemData(res.songs);
       on();
     });

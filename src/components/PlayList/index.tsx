@@ -1,4 +1,4 @@
-import { DotLoading, List } from "antd-mobile";
+import { Button, DotLoading, List, Popover } from "antd-mobile";
 import { getArtist, request, scrollIntoView } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
@@ -31,6 +31,21 @@ function PlayList({ dataSource }: playListType) {
     audio.play();
   };
 
+  const downloadItem = async (item) => {
+    const res = await request.get("/song/url", { params: { id: item.id } });
+
+    fetch(res.data[0].url).then((res) =>
+      res.blob().then((blob) => {
+        let a = document.createElement("a");
+        let url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = item.name;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+    );
+  };
+
   const playingBar = (
     <div className="voice-playing">
       <div
@@ -59,7 +74,23 @@ function PlayList({ dataSource }: playListType) {
           return (
             <List.Item
               key={item.id}
-              arrow={<span className="iconfont icon-androidgengduo"></span>}
+              arrow={
+                <Popover
+                  content={
+                    <Button color="primary" onClick={() => downloadItem(item)}>
+                      下载
+                    </Button>
+                  }
+                  trigger="click"
+                  placement="bottom"
+                  stopPropagation={["click"]}
+                >
+                  <span
+                    className="iconfont icon-androidgengduo"
+                    onClick={(e) => e.stopPropagation()}
+                  ></span>
+                </Popover>
+              }
               prefix={
                 ing.id === item.id ? (
                   playingBar
