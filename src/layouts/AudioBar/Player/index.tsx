@@ -5,9 +5,9 @@ import PlayBtn from "../PlayBtn";
 import AlBum from "../AlBum";
 import "./index.less";
 import { Icon } from "@/components";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import classNames from "classnames";
-import { getArtist, request, scrollIntoView } from "@/utils";
+import { getArtist, request, scrollIntoView, getRandom } from "@/utils";
 import parseLyric from "./parseLyric";
 import classnames from "classnames";
 
@@ -22,6 +22,7 @@ export default function Player({ onBack, visible }: PlayerType) {
   const { store, dispatch } = useRedux();
   const { ing, play, audio, currentTime, list } = store;
   const duration = Math.floor(ing.time / 1000);
+  const [playType, setPlayType] = useState(0);
 
   const [pop, onPop, offPop] = useBoolean(false);
 
@@ -29,6 +30,8 @@ export default function Player({ onBack, visible }: PlayerType) {
     if (ing.url) {
       audio.src = ing.url;
     }
+
+    console.log(Math.random());
   });
 
   useEffect(() => {
@@ -45,9 +48,9 @@ export default function Player({ onBack, visible }: PlayerType) {
   }, [play]);
 
   useEffect(() => {
+    //播放完成时，根据播放type切换
     if (currentTime >= duration) {
       dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
-
       next();
     }
 
@@ -111,18 +114,51 @@ export default function Player({ onBack, visible }: PlayerType) {
 
   const next = () => {
     const index = list.map((item) => item.id).indexOf(ing.id);
-    dispatch({
-      type: "CHANGE_ING",
-      payload: list[index + 1],
-    });
+
+    if (playType === 0) {
+      dispatch({
+        type: "CHANGE_ING",
+        payload: list[index + 1],
+      });
+    }
+
+    if (playType === 1) {
+      const random = getRandom(0, list.length, [index]);
+      dispatch({
+        type: "CHANGE_ING",
+        payload: list[random],
+      });
+    }
+    if (playType === 2) {
+      audio.src = ing.url;
+      audio.play();
+    }
   };
 
   const last = () => {
     const index = list.map((item) => item.id).indexOf(ing.id);
-    dispatch({
-      type: "CHANGE_ING",
-      payload: list[index - 1],
-    });
+    if (playType === 0) {
+      dispatch({
+        type: "CHANGE_ING",
+        payload: list[index - 1],
+      });
+    }
+
+    if (playType === 1) {
+      const random = getRandom(0, list.length, [index]);
+      dispatch({
+        type: "CHANGE_ING",
+        payload: list[random],
+      });
+    }
+    if (playType === 2) {
+      audio.src = ing.url;
+      audio.play();
+    }
+  };
+
+  const changePlayType = (type: number) => {
+    setPlayType(type);
   };
 
   return ReactDom.createPortal(
@@ -184,7 +220,27 @@ export default function Player({ onBack, visible }: PlayerType) {
         </div>
 
         <div className="control">
-          <Icon type="icon-liebiaoxunhuan" className="control-btn3" />
+          {playType === 0 && (
+            <Icon
+              type="icon-liebiaoxunhuan"
+              className="control-btn3"
+              onClick={() => changePlayType(1)}
+            />
+          )}
+          {playType === 1 && (
+            <Icon
+              type="icon-suijibofang"
+              className="control-btn3"
+              onClick={() => changePlayType(2)}
+            />
+          )}
+          {playType === 2 && (
+            <Icon
+              type="icon-danquxunhuan"
+              className="control-btn3"
+              onClick={() => changePlayType(0)}
+            />
+          )}
           <div className="control-center">
             <Icon
               type="icon-shangyishou"
@@ -218,8 +274,12 @@ export default function Player({ onBack, visible }: PlayerType) {
               return (
                 <List.Item
                   key={item.id}
-
-                  // onClick={() => onPlay(item, i)}
+                  onClick={() =>
+                    dispatch({
+                      type: "CHANGE_ING",
+                      payload: item,
+                    })
+                  }
                 >
                   <div
                     className={classnames("pop-list-item", {
