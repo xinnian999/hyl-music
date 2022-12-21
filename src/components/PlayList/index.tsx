@@ -1,5 +1,5 @@
 import { List } from "antd-mobile";
-import { getArtist, request } from "@/utils";
+import { getArtist, request, scrollIntoView } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
 import "./index.less";
@@ -51,11 +51,6 @@ function PlayList({ dataSource }: playListType) {
     </div>
   );
 
-  const goActive = () => {
-    const goElement = document.querySelector(".ing");
-    goElement?.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
   return (
     <>
       <List className="PlayList">
@@ -90,7 +85,10 @@ function PlayList({ dataSource }: playListType) {
           );
         })}
       </List>
-      <span className="iconfont icon-dangqiandingwei" onClick={goActive}></span>
+      <span
+        className="iconfont icon-dangqiandingwei"
+        onClick={() => scrollIntoView(".ing")}
+      ></span>
     </>
   );
 }

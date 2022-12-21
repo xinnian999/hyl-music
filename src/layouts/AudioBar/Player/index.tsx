@@ -1,14 +1,15 @@
-import { useMount, useRedux } from "@/hooks";
-import { List, NavBar } from "antd-mobile";
+import { useBoolean, useMount, useRedux } from "@/hooks";
+import { List, NavBar, Popup } from "antd-mobile";
 import ReactDom from "react-dom";
 import PlayBtn from "../PlayBtn";
 import AlBum from "../AlBum";
 import "./index.less";
 import { Icon } from "@/components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import classNames from "classnames";
-import { request } from "@/utils";
+import { getArtist, request, scrollIntoView } from "@/utils";
 import parseLyric from "./parseLyric";
+import classnames from "classnames";
 
 type PlayerType = {
   onBack: () => void;
@@ -22,11 +23,12 @@ export default function Player({ onBack, visible }: PlayerType) {
   const { ing, play, audio, currentTime, list } = store;
   const duration = Math.floor(ing.time / 1000);
 
+  const [pop, onPop, offPop] = useBoolean(false);
+
   useMount(() => {
     if (ing.url) {
       audio.src = ing.url;
     }
-    console.log(ing.lrc);
   });
 
   useEffect(() => {
@@ -45,28 +47,8 @@ export default function Player({ onBack, visible }: PlayerType) {
   useEffect(() => {
     if (currentTime >= duration) {
       dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
-      dispatch({ type: "CHANGE_PlAY", payload: false });
-      clearInterval(timer);
 
-      const index = list.map((item) => item.id).indexOf(ing.id);
-      dispatch({
-        type: "CHANGE_ING",
-        payload: list[index + 1],
-      });
-      request
-        .get("/song/url", { params: { id: list[index + 1].id } })
-        .then((result: any) => {
-          audio.src = result.data[0].url;
-          dispatch({
-            type: "CHANGE_ING",
-            payload: {
-              ...list[index + 1],
-              ...result.data[0],
-            },
-          });
-          audio.play();
-          dispatch({ type: "CHANGE_PlAY", payload: true });
-        });
+      next();
     }
 
     const active_lrc: any = document.querySelectorAll(".lrc-item-active");
@@ -84,6 +66,30 @@ export default function Player({ onBack, visible }: PlayerType) {
       });
     }
   }, [currentTime]);
+
+  useEffect(() => {
+    if (!ing.url) {
+      request.get("/song/url", { params: { id: ing.id } }).then((res) => {
+        dispatch({
+          type: "CHANGE_ING",
+          payload: { ...ing, ...res.data[0] },
+        });
+        audio.src = res.data[0].url;
+        if (play) {
+          dispatch({ type: "CHANGE_PlAY", payload: true });
+          audio.play();
+        }
+      });
+    }
+    if (!ing.lrc) {
+      request.get("/lyric", { params: { id: ing.id } }).then((res) => {
+        dispatch({
+          type: "CHANGE_ING",
+          payload: { ...ing, lrc: res.lrc.lyric },
+        });
+      });
+    }
+  }, [ing]);
 
   useEffect(() => {
     if (visible) {
@@ -104,7 +110,19 @@ export default function Player({ onBack, visible }: PlayerType) {
   };
 
   const next = () => {
-    dispatch({ type: "CHANGE_CURRENTTIME", payload: duration });
+    const index = list.map((item) => item.id).indexOf(ing.id);
+    dispatch({
+      type: "CHANGE_ING",
+      payload: list[index + 1],
+    });
+  };
+
+  const last = () => {
+    const index = list.map((item) => item.id).indexOf(ing.id);
+    dispatch({
+      type: "CHANGE_ING",
+      payload: list[index - 1],
+    });
   };
 
   return ReactDom.createPortal(
@@ -121,7 +139,7 @@ export default function Player({ onBack, visible }: PlayerType) {
         <NavBar className="player-main-header" onBack={onBack}>
           {ing.name}
         </NavBar>
-
+        <p className="artist">{getArtist(ing.ar)}</p>
         <AlBum className="player-avatar" />
 
         {ing.lrc && (
@@ -159,16 +177,20 @@ export default function Player({ onBack, visible }: PlayerType) {
             </div>
           </div>
           <span className="progress-durationTime">
-            0{parseInt(String(duration / 60))}:
-            {parseInt(String(duration / 10)) % 6}
-            {duration % 10}
+            0{parseInt(String(duration / 60)) || 0}:
+            {parseInt(String(duration / 10)) % 6 || 0}
+            {duration % 10 || 0}
           </span>
         </div>
 
         <div className="control">
           <Icon type="icon-liebiaoxunhuan" className="control-btn3" />
           <div className="control-center">
-            <Icon type="icon-shangyishou" className="control-btn2" />
+            <Icon
+              type="icon-shangyishou"
+              className="control-btn2"
+              onClick={last}
+            />
             <PlayBtn className="control-btn" />
             <Icon
               type="icon-xiayishou"
@@ -176,8 +198,42 @@ export default function Player({ onBack, visible }: PlayerType) {
               onClick={next}
             />
           </div>
-          <Icon type="icon-liebiao" className="control-btn3" />
+          <Icon type="icon-liebiao" className="control-btn3" onClick={onPop} />
         </div>
+
+        <Popup
+          visible={pop}
+          onMaskClick={offPop}
+          bodyStyle={{
+            borderTopLeftRadius: "8px",
+            borderTopRightRadius: "8px",
+            maxHeight: "40vh",
+            zIndex: 99999,
+            overflowY: "scroll",
+          }}
+          afterShow={() => scrollIntoView(".pop-list-itemActive")}
+        >
+          <List>
+            {list.map((item: any, i) => {
+              return (
+                <List.Item
+                  key={item.id}
+
+                  // onClick={() => onPlay(item, i)}
+                >
+                  <div
+                    className={classnames("pop-list-item", {
+                      "pop-list-itemActive": ing.id === item.id,
+                    })}
+                  >
+                    {item.name} -{" "}
+                    <span className="artist">{getArtist(item.ar)}</span>
+                  </div>
+                </List.Item>
+              );
+            })}
+          </List>
+        </Popup>
       </div>
     </div>,
     document.body

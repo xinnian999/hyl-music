@@ -8,7 +8,7 @@
   position: fixed;
   top: 100%;
   left: 0;
-  z-index: 999999999;
+  z-index: 99;
   overflow: hidden;
   transition: 0.5s all;
   .bg {
@@ -44,6 +44,11 @@
       margin-top: 20px;
     }
 
+    .artist {
+      text-align: center;
+      color: rgb(221, 218, 218);
+    }
+
     .player-avatar {
       border-radius: 50%;
       border: 1px solid #999;
@@ -58,19 +63,19 @@
 
     .lrc {
       text-align: center;
-      height: 30vh;
+      height: 20vh;
       overflow: auto;
       margin-top: 50px;
       position: fixed;
       left: 50%;
       transform: translateX(-50%);
       width: 100%;
+      padding: 0 15px;
+      box-sizing: border-box;
       &-item {
         line-height: 25px;
       }
-      &-item-active {
-        // color: aquamarine;
-      }
+
       &-item-current {
         color: aquamarine;
       }
@@ -81,7 +86,7 @@
       width: 100%;
 
       position: absolute;
-      bottom: 20%;
+      bottom: 13%;
       left: 0;
       padding: 0 15px;
       box-sizing: border-box;
@@ -120,7 +125,7 @@
 
     .control {
       position: absolute;
-      bottom: 10%;
+      bottom: 5%;
       left: 0;
       width: 100%;
       display: flex;
