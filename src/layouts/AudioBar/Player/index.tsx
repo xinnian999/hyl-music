@@ -10,6 +10,7 @@ import classNames from "classnames";
 import { getArtist, request, scrollIntoView, getRandom } from "@/utils";
 import parseLyric from "./parseLyric";
 import classnames from "classnames";
+import $ from "jquery";
 
 type PlayerType = {
   onBack: () => void;
@@ -30,8 +31,6 @@ export default function Player({ onBack, visible }: PlayerType) {
     if (ing.url) {
       audio.src = ing.url;
     }
-
-    console.log(Math.random());
   });
 
   useEffect(() => {
@@ -63,16 +62,15 @@ export default function Player({ onBack, visible }: PlayerType) {
 
     if (current_active_lrc) {
       current_active_lrc.classList.add("lrc-item-current");
-      current_active_lrc?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+
+      $(".lrc").animate({ scrollTop: current_active_lrc.offsetTop - 50 }, 500);
     }
   }, [currentTime]);
 
   useEffect(() => {
     if (!ing.url) {
       request.get("/song/url", { params: { id: ing.id } }).then((res) => {
+        if (!res.data[0].url) return next();
         dispatch({
           type: "CHANGE_ING",
           payload: { ...ing, ...res.data[0] },
@@ -163,9 +161,13 @@ export default function Player({ onBack, visible }: PlayerType) {
 
   return ReactDom.createPortal(
     <div
-      className={classNames("player-contariner", {
-        visible,
-      })}
+      className={classNames(
+        "player-contariner",
+        "animate__animated  animate__fadeInUp",
+        {
+          visible,
+        }
+      )}
     >
       <div
         className="bg"

@@ -34,7 +34,7 @@ function parseLyric(lyric: string) {
 
   function parseLyricLine(line: any) {
     const tiArAlByExp = /^\[(ti|ar|al|by):(.*)\]$/;
-    const lyricExp = /^\[(\d{2}):(\d{2}).(\d{2}|\d{3})\](.*)/;
+    const lyricExp = /^\[(\d{2}):(\d{2}).(\d{1}|\d{2}|\d{3})\](.*)/;
     let result;
     if ((result = line.match(tiArAlByExp)) !== null) {
       return {

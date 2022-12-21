@@ -14,6 +14,7 @@
     "antd-mobile": "^5.27.0",
     "axios": "^1.2.1",
     "classnames": "^2.3.2",
+    "jquery": "^3.6.3",
     "lodash": "^4.17.21",
     "react-redux": "^8.0.5",
     "redux": "^4.2.0",
@@ -23,6 +24,7 @@
     "umi": "^4.0.38"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.14",
     "@types/lodash": "^4.14.191",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
