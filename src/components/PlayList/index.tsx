@@ -1,4 +1,4 @@
-import { List } from "antd-mobile";
+import { DotLoading, List } from "antd-mobile";
 import { getArtist, request, scrollIntoView } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
@@ -50,7 +50,8 @@ function PlayList({ dataSource }: playListType) {
       ></div>
     </div>
   );
-
+  if (!dataSource.length)
+    return <DotLoading color="primary" className="loading" />;
   return (
     <>
       <List className="PlayList">
