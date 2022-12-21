@@ -21,7 +21,7 @@
     height: 100%;
     width: 100%;
     z-index: 999;
-    // background: #161824;
+    background: #161824;
     &::before {
       content: " ";
       position: absolute;
@@ -56,6 +56,26 @@
       margin-top: 20px;
     }
 
+    .lrc {
+      text-align: center;
+      height: 30vh;
+      overflow: auto;
+      margin-top: 50px;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      &-item {
+        line-height: 25px;
+      }
+      &-item-active {
+        // color: aquamarine;
+      }
+      &-item-current {
+        color: aquamarine;
+      }
+    }
+
     .progress {
       height: 20px;
       width: 100%;
@@ -69,12 +89,14 @@
       align-items: center;
       &-currentTime,
       &-durationTime {
-        padding: 0 10px;
+        width: 50px;
+        text-align: center;
       }
       &-body {
         flex: 1;
         height: 5px;
         background-color: rgba(0, 0, 0, 0.3);
+        border: 0.5px solid #eee;
         line-height: 20px;
         border-radius: 20px;
         .current-progress {
@@ -86,9 +108,9 @@
             position: absolute;
             right: 0;
             top: 0;
-            transform: translate(50%, -25%);
-            width: 10px;
-            height: 10px;
+            transform: translate(50%, -30%);
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background-color: #fff;
           }

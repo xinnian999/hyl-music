@@ -1,5 +1,5 @@
 import { useMount, useRedux } from "@/hooks";
-import { NavBar } from "antd-mobile";
+import { List, NavBar } from "antd-mobile";
 import ReactDom from "react-dom";
 import PlayBtn from "../PlayBtn";
 import AlBum from "../AlBum";
@@ -8,6 +8,7 @@ import { Icon } from "@/components";
 import { useEffect, useState } from "react";
 import classNames from "classnames";
 import { request } from "@/utils";
+import parseLyric from "./parseLyric";
 
 type PlayerType = {
   onBack: () => void;
@@ -25,6 +26,7 @@ export default function Player({ onBack, visible }: PlayerType) {
     if (ing.url) {
       audio.src = ing.url;
     }
+    console.log(ing.lrc);
   });
 
   useEffect(() => {
@@ -66,6 +68,21 @@ export default function Player({ onBack, visible }: PlayerType) {
           dispatch({ type: "CHANGE_PlAY", payload: true });
         });
     }
+
+    const active_lrc: any = document.querySelectorAll(".lrc-item-active");
+
+    for (const i of active_lrc) {
+      i.classList.remove("lrc-item-current");
+    }
+    const current_active_lrc = active_lrc[active_lrc.length - 1];
+
+    if (current_active_lrc) {
+      current_active_lrc.classList.add("lrc-item-current");
+      current_active_lrc?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
   }, [currentTime]);
 
   useEffect(() => {
@@ -106,6 +123,26 @@ export default function Player({ onBack, visible }: PlayerType) {
         </NavBar>
 
         <AlBum className="player-avatar" />
+
+        {ing.lrc && (
+          <div className="lrc">
+            {parseLyric(ing.lrc).lrc.map(({ lyric, time }: any, index) => {
+              const { m, s, ms } = time;
+              const times = Number(ms) + s * 1000 + m * 60 * 1000;
+
+              return (
+                <div
+                  className={classNames("lrc-item", {
+                    "lrc-item-active": audio.currentTime * 1000 >= times,
+                  })}
+                  key={lyric + index}
+                >
+                  {lyric}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <div className="progress">
           <span className="progress-currentTime">

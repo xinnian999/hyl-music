@@ -33,7 +33,7 @@ const reducer = (
     case "CHANGE_ING":
       return {
         ...state,
-        ing: pick(payload, ["id", "name", "url", "al", "ar", "time"]),
+        ing: pick(payload, ["id", "name", "url", "al", "ar", "time", "lrc"]),
       };
     case "CHANGE_PlAY":
       return { ...state, play: payload };

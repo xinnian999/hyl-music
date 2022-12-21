@@ -18,11 +18,12 @@ function PlayList({ dataSource }: playListType) {
   const onPlay = async (item: any, i) => {
     index = i;
     const res = await request.get("/song/url", { params: { id: item.id } });
+    const lrc = await request.get("/lyric", { params: { id: item.id } });
     audio.src = res.data[0].url;
 
     dispatch({
       type: "CHANGE_ING",
-      payload: { ...item, ...res.data[0] },
+      payload: { ...item, ...res.data[0], lrc: lrc.lrc.lyric },
     });
     dispatch({ type: "CHANGE_PlAY", payload: true });
     dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
