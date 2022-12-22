@@ -36,6 +36,7 @@ export default function Player({ onBack, visible }: PlayerType) {
   useMount(() => {
     if (ing.url) {
       audio.src = httpTohttps(ing.url);
+      audio.autoplay = true;
     }
   });
 
@@ -84,7 +85,7 @@ export default function Player({ onBack, visible }: PlayerType) {
         audio.src = httpTohttps(res.data[0].url);
         if (play) {
           dispatch({ type: "CHANGE_PlAY", payload: true });
-          audio.play();
+          // audio.play();
         }
       });
     }

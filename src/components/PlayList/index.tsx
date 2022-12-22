@@ -8,27 +8,25 @@ type playListType = {
   dataSource: any[];
 };
 
-let index = 0;
-
 function PlayList({ dataSource }: playListType) {
-  const { store, dispatch } = useRedux();
+  const { store, dispatchAll } = useRedux();
 
   const { ing, play, audio } = store;
 
-  const onPlay = async (item: any, i) => {
-    index = i;
+  const onPlay = async (item: any) => {
     const res = await request.get("/song/url", { params: { id: item.id } });
     const lrc = await request.get("/lyric", { params: { id: item.id } });
     audio.src = httpTohttps(res.data[0].url);
 
-    dispatch({
-      type: "CHANGE_ING",
-      payload: { ...item, ...res.data[0], lrc: lrc.lrc.lyric },
-    });
-    dispatch({ type: "CHANGE_PlAY", payload: true });
-    dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
-    dispatch({ type: "CHANGE_LIST", payload: dataSource });
-    audio.play();
+    dispatchAll([
+      {
+        type: "CHANGE_ING",
+        payload: { ...item, ...res.data[0], lrc: lrc.lrc.lyric },
+      },
+      { type: "CHANGE_PlAY", payload: true },
+      { type: "CHANGE_CURRENTTIME", payload: 0 },
+      { type: "CHANGE_LIST", payload: dataSource },
+    ]);
   };
 
   const downloadItem = async (item) => {
