@@ -7,7 +7,13 @@ import "./index.less";
 import { Icon } from "@/components";
 import { useEffect, useState } from "react";
 import classNames from "classnames";
-import { getArtist, request, scrollIntoView, getRandom } from "@/utils";
+import {
+  getArtist,
+  request,
+  scrollIntoView,
+  getRandom,
+  httpTohttps,
+} from "@/utils";
 import parseLyric from "./parseLyric";
 import classnames from "classnames";
 import $ from "jquery";
@@ -29,7 +35,7 @@ export default function Player({ onBack, visible }: PlayerType) {
 
   useMount(() => {
     if (ing.url) {
-      audio.src = ing.url;
+      audio.src = httpTohttps(ing.url);
     }
   });
 
@@ -75,7 +81,7 @@ export default function Player({ onBack, visible }: PlayerType) {
           type: "CHANGE_ING",
           payload: { ...ing, ...res.data[0] },
         });
-        audio.src = res.data[0].url;
+        audio.src = httpTohttps(res.data[0].url);
         if (play) {
           dispatch({ type: "CHANGE_PlAY", payload: true });
           audio.play();
@@ -128,7 +134,7 @@ export default function Player({ onBack, visible }: PlayerType) {
       });
     }
     if (playType === 2) {
-      audio.src = ing.url;
+      audio.src = httpTohttps(ing.url);
       audio.play();
     }
   };
@@ -150,7 +156,7 @@ export default function Player({ onBack, visible }: PlayerType) {
       });
     }
     if (playType === 2) {
-      audio.src = ing.url;
+      audio.src = httpTohttps(ing.url);
       audio.play();
     }
   };

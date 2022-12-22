@@ -1,5 +1,5 @@
 import { Button, DotLoading, List, Popover } from "antd-mobile";
-import { getArtist, request, scrollIntoView } from "@/utils";
+import { getArtist, httpTohttps, request, scrollIntoView } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
 import "./index.less";
@@ -19,7 +19,7 @@ function PlayList({ dataSource }: playListType) {
     index = i;
     const res = await request.get("/song/url", { params: { id: item.id } });
     const lrc = await request.get("/lyric", { params: { id: item.id } });
-    audio.src = res.data[0].url;
+    audio.src = httpTohttps(res.data[0].url);
 
     dispatch({
       type: "CHANGE_ING",
@@ -34,7 +34,7 @@ function PlayList({ dataSource }: playListType) {
   const downloadItem = async (item) => {
     const res = await request.get("/song/url", { params: { id: item.id } });
 
-    fetch(res.data[0].url).then((res) =>
+    fetch(httpTohttps(res.data[0].url)).then((res) =>
       res.blob().then((blob) => {
         let a = document.createElement("a");
         let url = window.URL.createObjectURL(blob);
