@@ -37,10 +37,7 @@ const DocsPage = () => {
             return (
               <List.Item key={item.id} onClick={() => goArtist(item)}>
                 <div className="artist-item">
-                  <Avatar
-                    src={httpTohttps(item.img1v1Url)}
-                    className="artist-avatar"
-                  />
+                  <Avatar src={item.img1v1Url} className="artist-avatar" />
                   <div>{item.name}</div>
                 </div>
               </List.Item>

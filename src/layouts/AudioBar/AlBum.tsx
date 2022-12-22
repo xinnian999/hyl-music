@@ -1,5 +1,4 @@
 import { useRedux } from "@/hooks";
-import { httpTohttps } from "@/utils";
 import classnames from "classnames";
 
 export default function AlBum({ className }) {
@@ -12,7 +11,7 @@ export default function AlBum({ className }) {
       className={classnames("album", className, {
         "animation-stop": !play,
       })}
-      src={httpTohttps(ing.al?.picUrl)}
+      src={ing.al?.picUrl}
     />
   );
 }
