@@ -70,7 +70,7 @@ export default function Player({ onBack, visible }: PlayerType) {
     if (current_active_lrc) {
       current_active_lrc.classList.add("lrc-item-current");
 
-      $(".lrc").animate({ scrollTop: current_active_lrc.offsetTop - 50 }, 500);
+      $(".lrc").animate({ scrollTop: current_active_lrc.offsetTop - 90 }, 500);
     }
   }, [currentTime]);
 
@@ -85,7 +85,6 @@ export default function Player({ onBack, visible }: PlayerType) {
         audio.src = httpTohttps(res.data[0].url);
         if (play) {
           dispatch({ type: "CHANGE_PlAY", payload: true });
-          // audio.play();
         }
       });
     }
