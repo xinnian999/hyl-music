@@ -40,6 +40,8 @@
     left: 0;
     z-index: 1;
     color: #fff;
+    display: flex;
+    flex-direction: column;
     &-header {
       margin-top: 20px;
     }
@@ -59,17 +61,18 @@
       display: block;
       margin: 0 auto;
       margin-top: 20px;
-      margin-bottom: 50px;
+      margin-bottom: 40px;
     }
 
     .lrc {
       text-align: center;
-      height: 200px;
+      height: 20vh;
       overflow: auto;
       position: relative;
       width: 100%;
       padding: 0 15px;
       box-sizing: border-box;
+      flex: 1;
       &-item {
         line-height: 25px;
       }
@@ -77,73 +80,75 @@
       &-item-current {
         color: aquamarine;
       }
-    }
 
-    .progress {
-      height: 20px;
-      width: 100%;
-
-      position: absolute;
-      bottom: 13%;
-      left: 0;
-      padding: 0 15px;
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      &-currentTime,
-      &-durationTime {
-        width: 50px;
-        text-align: center;
-      }
-      &-body {
-        flex: 1;
-        height: 5px;
-        background-color: rgba(0, 0, 0, 0.3);
-        border: 0.5px solid #eee;
-        line-height: 20px;
-        border-radius: 20px;
-        .current-progress {
-          // width: 5%;
-          height: 100%;
-          background-color: #fff;
-          position: relative;
-          &-head {
-            position: absolute;
-            right: 0;
-            top: 0;
-            transform: translate(50%, -30%);
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #fff;
-          }
-        }
+      &::-webkit-scrollbar {
+        display: none;
       }
     }
 
     .control {
-      position: absolute;
-      bottom: 5%;
-      left: 0;
       width: 100%;
-      display: flex;
-      justify-content: space-around;
-      line-height: 50px;
-      .control-btn {
-        font-size: 50px;
-      }
-      .control-btn2 {
-        font-size: 35px;
-      }
+      padding: 50px 0 30px;
+      align-self: flex-end;
 
-      .control-btn3 {
-        font-size: 25px;
-      }
-
-      .control-center {
+      .control-botton {
         display: flex;
-        width: 40%;
-        justify-content: space-between;
+        justify-content: space-around;
+        line-height: 50px;
+        .control-btn {
+          font-size: 50px;
+        }
+        .control-btn2 {
+          font-size: 35px;
+        }
+
+        .control-btn3 {
+          font-size: 25px;
+        }
+
+        .control-center {
+          display: flex;
+          width: 40%;
+          justify-content: space-between;
+        }
+      }
+
+      .progress {
+        height: 20px;
+        width: 100%;
+        padding: 0 15px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        &-currentTime,
+        &-durationTime {
+          width: 50px;
+          text-align: center;
+        }
+        &-body {
+          flex: 1;
+          height: 5px;
+          background-color: rgba(0, 0, 0, 0.3);
+          border: 0.5px solid #eee;
+          line-height: 20px;
+          border-radius: 20px;
+          .current-progress {
+            height: 100%;
+            background-color: #fff;
+            position: relative;
+            &-head {
+              position: absolute;
+              right: 0;
+              top: 0;
+              transform: translate(50%, -30%);
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background-color: #fff;
+            }
+          }
+        }
       }
     }
   }

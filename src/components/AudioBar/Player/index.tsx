@@ -70,7 +70,12 @@ export default function Player({ onBack, visible }: PlayerType) {
     if (current_active_lrc) {
       current_active_lrc.classList.add("lrc-item-current");
 
-      $(".lrc").animate({ scrollTop: current_active_lrc.offsetTop - 90 }, 500);
+      $(".lrc").animate(
+        {
+          scrollTop: current_active_lrc.offsetTop - $(".lrc").height() / 2,
+        },
+        500
+      );
     }
   }, [currentTime]);
 
@@ -186,9 +191,9 @@ export default function Player({ onBack, visible }: PlayerType) {
         <p className="artist">{getArtist(ing.ar)}</p>
         <AlBum className="player-avatar" />
 
-        {ing.lrc && (
-          <div className="lrc">
-            {parseLyric(ing.lrc).lrc.map(({ lyric, time }: any, index) => {
+        <div className="lrc">
+          {ing.lrc &&
+            parseLyric(ing.lrc).lrc.map(({ lyric, time }: any, index) => {
               const { m, s, ms } = time;
               const times = Number(ms) + s * 1000 + m * 60 * 1000;
 
@@ -203,68 +208,72 @@ export default function Player({ onBack, visible }: PlayerType) {
                 </div>
               );
             })}
-          </div>
-        )}
-
-        <div className="progress">
-          <span className="progress-currentTime">
-            0{parseInt(String(currentTime / 60))}:
-            {parseInt(String(currentTime / 10)) % 6}
-            {parseInt(String(currentTime % 10))}
-          </span>
-          <div className="progress-body" onClick={goProgress}>
-            <div
-              className="current-progress"
-              style={{ width: `${(currentTime / duration) * 100}%` }}
-            >
-              <span className="current-progress-head"></span>
-            </div>
-          </div>
-          <span className="progress-durationTime">
-            0{parseInt(String(duration / 60)) || 0}:
-            {parseInt(String(duration / 10)) % 6 || 0}
-            {duration % 10 || 0}
-          </span>
         </div>
 
         <div className="control">
-          {playType === 0 && (
+          <div className="progress">
+            <span className="progress-currentTime">
+              0{parseInt(String(currentTime / 60))}:
+              {parseInt(String(currentTime / 10)) % 6}
+              {parseInt(String(currentTime % 10))}
+            </span>
+            <div className="progress-body" onClick={goProgress}>
+              <div
+                className="current-progress"
+                style={{ width: `${(currentTime / duration) * 100}%` }}
+              >
+                <span className="current-progress-head"></span>
+              </div>
+            </div>
+            <span className="progress-durationTime">
+              0{parseInt(String(duration / 60)) || 0}:
+              {parseInt(String(duration / 10)) % 6 || 0}
+              {duration % 10 || 0}
+            </span>
+          </div>
+
+          <div className="control-botton">
+            {playType === 0 && (
+              <Icon
+                type="icon-liebiaoxunhuan"
+                className="control-btn3"
+                onClick={() => changePlayType(1)}
+              />
+            )}
+            {playType === 1 && (
+              <Icon
+                type="icon-suijibofang"
+                className="control-btn3"
+                onClick={() => changePlayType(2)}
+              />
+            )}
+            {playType === 2 && (
+              <Icon
+                type="icon-danquxunhuan"
+                className="control-btn3"
+                onClick={() => changePlayType(0)}
+              />
+            )}
+            <div className="control-center">
+              <Icon
+                type="icon-shangyishou"
+                className="control-btn2"
+                onClick={last}
+              />
+              <PlayBtn className="control-btn" />
+              <Icon
+                type="icon-xiayishou"
+                className="control-btn2"
+                onClick={next}
+              />
+            </div>
             <Icon
-              type="icon-liebiaoxunhuan"
+              type="icon-liebiao"
               className="control-btn3"
-              onClick={() => changePlayType(1)}
-            />
-          )}
-          {playType === 1 && (
-            <Icon
-              type="icon-suijibofang"
-              className="control-btn3"
-              onClick={() => changePlayType(2)}
-            />
-          )}
-          {playType === 2 && (
-            <Icon
-              type="icon-danquxunhuan"
-              className="control-btn3"
-              onClick={() => changePlayType(0)}
-            />
-          )}
-          <div className="control-center">
-            <Icon
-              type="icon-shangyishou"
-              className="control-btn2"
-              onClick={last}
-            />
-            <PlayBtn className="control-btn" />
-            <Icon
-              type="icon-xiayishou"
-              className="control-btn2"
-              onClick={next}
+              onClick={onPop}
             />
           </div>
-          <Icon type="icon-liebiao" className="control-btn3" onClick={onPop} />
         </div>
-
         <Popup
           visible={pop}
           onMaskClick={offPop}
