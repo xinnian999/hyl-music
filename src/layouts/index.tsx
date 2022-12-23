@@ -4,10 +4,9 @@ import { Button, TabBar } from "antd-mobile";
 import { useEffect, useState } from "react";
 import { store, persistor } from "@/store";
 import { PersistGate } from "redux-persist/integration/react";
-import AudioBar from "./AudioBar";
+import { AudioBar } from "@/components";
 import "animate.css";
 import "./index.less";
-import { request } from "@/utils";
 import cookie from "js-cookie";
 
 const tabs = [
