@@ -3,4 +3,4 @@ import PlayList from "./PlayList";
 import Icon from "./Icon";
 import AudioBar from "./AudioBar";
 
-export { Banner, PlayList, Icon，AudioBar };
+export { Banner, PlayList, Icon, AudioBar };
