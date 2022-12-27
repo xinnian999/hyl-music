@@ -60,23 +60,7 @@ export default function Player({ onBack, visible }: PlayerType) {
       next();
     }
 
-    const active_lrc: any = document.querySelectorAll(".lrc-item-active");
-
-    for (const i of active_lrc) {
-      i.classList.remove("lrc-item-current");
-    }
-    const current_active_lrc = active_lrc[active_lrc.length - 1];
-
-    if (current_active_lrc) {
-      current_active_lrc.classList.add("lrc-item-current");
-
-      $(".lrc").animate(
-        {
-          scrollTop: current_active_lrc.offsetTop - $(".lrc").height() / 2,
-        },
-        500
-      );
-    }
+    golrc()
   }, [currentTime]);
 
   useEffect(() => {
@@ -110,6 +94,26 @@ export default function Player({ onBack, visible }: PlayerType) {
       document.body.style.overflow = "auto";
     }
   }, [visible]);
+
+  const golrc=()=>{
+    const active_lrc: any = document.querySelectorAll(".lrc-item-active");
+
+    for (const i of active_lrc) {
+      i.classList.remove("lrc-item-current");
+    }
+    const current_active_lrc = active_lrc[active_lrc.length - 1];
+
+    if (current_active_lrc) {
+      current_active_lrc.classList.add("lrc-item-current");
+
+      $(".lrc").animate(
+        {
+          scrollTop: current_active_lrc.offsetTop - $(".lrc").height() / 2,
+        },
+        500
+      );
+    }
+  }
 
   const goProgress = (e) => {
     const progressBodyEl: any = document.querySelector(".progress-body");

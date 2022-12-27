@@ -1,8 +1,9 @@
 import { Banner, PlayList } from "@/components";
 import { useBoolean, useMount } from "@/hooks";
-import { request } from "@/utils";
-import { Avatar, List, NavBar } from "antd-mobile";
-import { useState } from "react";
+import { request,scrollIntoView } from "@/utils";
+import { Avatar, List, DotLoading, NavBar } from "antd-mobile";
+import classNames from "classnames";
+import {  useEffect, useState } from "react";
 
 import "./index.less";
 
@@ -18,36 +19,42 @@ const DocsPage = () => {
 
   useMount(() => {
     request("/toplist/artist").then((res) => {
-      setData(res.list.artists);
+     setData(res.list.artists);
     });
   });
 
   const goArtist = (item) => {
+    on();
+    window.scrollTo(0, 0)
     setCurrentArtist(item);
+    setItemData([]);
     request("/artist/top/song", { params: { id: item.id } }).then((res) => {
       setItemData(res.songs);
-      on();
-      window.scrollTo(0, 0);
     });
   };
+
+  useEffect(()=>{
+    if(!flag&&currentArtist.name) scrollIntoView(`.${currentArtist.name}`)
+  },[flag])
+
 
   return (
     <div id="artistList">
       {!flag ? (
         <>
           <Banner title="歌手" />
-          <List>
+          {data.length?<List>
             {data.map((item: any) => {
               return (
-                <List.Item key={item.id} onClick={() => goArtist(item)}>
-                  <div className="artist-item">
+                <List.Item key={item.id} onClick={() => goArtist(item)} >
+                  <div className={classNames("artist-item",item.name,{'artist-item-old':item.name===currentArtist.name}) }>
                     <Avatar src={item.img1v1Url} className="artist-avatar" />
                     <div>{item.name}</div>
                   </div>
                 </List.Item>
               );
             })}
-          </List>
+          </List>:<DotLoading color="primary" className="loading"/>}
         </>
       ) : (
         <>

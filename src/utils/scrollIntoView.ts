@@ -5,7 +5,6 @@ const scrollIntoView = (name: string) => {
     block: "center",
   });
 
-  // el.parentNode.scrollTop = el.offsetTop;
 };
 
 export default scrollIntoView;
