@@ -39,143 +39,55 @@ export default function Player({ onBack, visible }: PlayerType) {
     }
   });
 
-  useEffect(() => {
-    if (!play) {
-      clearInterval(timer);
-      audio.pause();
-      return;
-    }
+  const onTouchProgressMouseDown = (e: any) => {
+    let progressX: number;
 
-    timer = setInterval(() => {
-      dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
-      renderCurrentTime(audio.currentTime);
-    }, 500);
-    audio.play();
-  }, [play]);
+    const move = (e: any) => {
+      progressX = e.targetTouches[0].pageX - 75;
 
-  useEffect(() => {
-    if (!ing.url) {
-      request.get("/song/url", { params: { id: ing.id } }).then((res) => {
-        if (!res.data[0].url) return next();
-        dispatch({
-          type: "CHANGE_ING",
-          payload: { ...ing, ...res.data[0] },
-        });
-        audio.src = httpTohttps(res.data[0].url);
-        if (play) {
-          dispatch({ type: "CHANGE_PlAY", payload: true });
-        }
-      });
-    }
-    if (!ing.lrc) {
-      request.get("/lyric", { params: { id: ing.id } }).then((res) => {
-        dispatch({
-          type: "CHANGE_ING",
-          payload: { ...ing, lrc: res.lrc.lyric },
-        });
-      });
-    }
-    document.title=`${ing.name} - 小琳音乐站`
-  }, [ing]);
+      if (progressX <= 0) {
+        progressX = 0;
+      }
 
-  useEffect(() => {
-    //播放完成时，切换下一曲
-    if (currentTime >= duration) {
-      dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
-      next();
-    }
+      if (progressX >= $(".progress-body").width()) {
+        progressX = $(".progress-body").width() - 1;
+      }
 
-    const active_lrc: any = document.querySelectorAll(".lrc-item-active");
+      $(".current-progress").css("width", progressX);
 
-    for (const i of active_lrc) {
-      i.classList.remove("lrc-item-current");
-    }
-    const current_active_lrc = active_lrc[active_lrc.length - 1];
+      renderCurrentTime(
+        Math.floor((progressX / $(".progress-body").width()) * duration)
+      );
+    };
 
-    if (current_active_lrc) {
-      current_active_lrc.classList.add("lrc-item-current");
+    const end = (e: any) => {
+      const time = Math.floor(
+        (progressX / $(".progress-body").width()) * duration
+      );
 
-      $(".lrc")
-        .stop()
-        .animate(
-          {
-            scrollTop: current_active_lrc.offsetTop - $(".lrc").height() / 2,
-          },
-          500
-        );
-    }
+      if (time) audio.currentTime = time;
 
-  }, [currentTime]);
+      timer = setInterval(() => {
+        dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
+        renderCurrentTime(audio.currentTime);
+      }, 500);
 
-  useEffect(() => {
-    if (visible) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [visible]);
+      document.ontouchmove = null;
+      document.ontouchend = null;
+    };
 
-  const next = () => {
-    
-    const index = list.map((item) => item.id).indexOf(ing.id);
+    clearInterval(timer);
+    progressX = e.targetTouches[0].pageX - 75;
 
-    if (playType === 0) {
-      dispatch({
-        type: "CHANGE_ING",
-        payload: list[index + 1],
-      });
-    }
+    $(".current-progress").css("width", progressX);
 
-    if (playType === 1) {
-      const random = getRandom(0, list.length, [index]);
-      dispatch({
-        type: "CHANGE_ING",
-        payload: list[random],
-      });
-    }
-    if (playType === 2) {
-      audio.src = httpTohttps(ing.url);
-      audio.play();
-    }
+    document.ontouchmove = move;
+    document.ontouchend = end;
   };
-
-  const last = () => {
-
-    const index = list.map((item) => item.id).indexOf(ing.id);
-    if (playType === 0) {
-      dispatch({
-        type: "CHANGE_ING",
-        payload: list[index - 1],
-      });
-    }
-
-    if (playType === 1) {
-      const random = getRandom(0, list.length, [index]);
-      dispatch({
-        type: "CHANGE_ING",
-        payload: list[random],
-      });
-    }
-    if (playType === 2) {
-      audio.src = httpTohttps(ing.url);
-      audio.play();
-    }
-  };
-
-  const changePlayType = (type: number) => {
-    setPlayType(type);
-  };
-
-  const renderCurrentTime = (time) =>
-    $(".progress-currentTime").text(
-      `0${parseInt(String(time / 60))}:${
-        parseInt(String(time / 10)) % 6
-      }${parseInt(String(time % 10))}`
-    );
 
   const onDragProgressMouseDown = (e) => {
     e.stopPropagation();
-    
+
     document.onselectstart = () => false;
     document.ondragstart = () => false;
     clearInterval(timer);
@@ -229,7 +141,138 @@ export default function Player({ onBack, visible }: PlayerType) {
     };
   };
 
-  const goProgress=(e)=>{
+  useEffect(() => {
+    if (!play) {
+      clearInterval(timer);
+      audio.pause();
+      return;
+    }
+
+    timer = setInterval(() => {
+      dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
+      renderCurrentTime(audio.currentTime);
+    }, 500);
+    audio.play();
+  }, [play]);
+
+  useEffect(() => {
+    if (!ing.url) {
+      request.get("/song/url", { params: { id: ing.id } }).then((res) => {
+        if (!res.data[0].url) return next();
+        dispatch({
+          type: "CHANGE_ING",
+          payload: { ...ing, ...res.data[0] },
+        });
+        audio.src = httpTohttps(res.data[0].url);
+        if (play) {
+          dispatch({ type: "CHANGE_PlAY", payload: true });
+        }
+      });
+    }
+    if (!ing.lrc) {
+      request.get("/lyric", { params: { id: ing.id } }).then((res) => {
+        dispatch({
+          type: "CHANGE_ING",
+          payload: { ...ing, lrc: res.lrc.lyric },
+        });
+      });
+    }
+    document.title = `${ing.name} - 小琳音乐站`;
+  }, [ing]);
+
+  useEffect(() => {
+    //播放完成时，切换下一曲
+    if (currentTime >= duration) {
+      dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
+      next();
+    }
+
+    const active_lrc: any = document.querySelectorAll(".lrc-item-active");
+
+    for (const i of active_lrc) {
+      i.classList.remove("lrc-item-current");
+    }
+    const current_active_lrc = active_lrc[active_lrc.length - 1];
+
+    if (current_active_lrc) {
+      current_active_lrc.classList.add("lrc-item-current");
+
+      $(".lrc")
+        .stop()
+        .animate(
+          {
+            scrollTop: current_active_lrc.offsetTop - $(".lrc").height() / 2,
+          },
+          500
+        );
+    }
+  }, [currentTime]);
+
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [visible]);
+
+  const next = () => {
+    const index = list.map((item) => item.id).indexOf(ing.id);
+
+    if (playType === 0) {
+      dispatch({
+        type: "CHANGE_ING",
+        payload: list[index + 1],
+      });
+    }
+
+    if (playType === 1) {
+      const random = getRandom(0, list.length, [index]);
+      dispatch({
+        type: "CHANGE_ING",
+        payload: list[random],
+      });
+    }
+    if (playType === 2) {
+      audio.src = httpTohttps(ing.url);
+      audio.play();
+    }
+  };
+
+  const last = () => {
+    const index = list.map((item) => item.id).indexOf(ing.id);
+    if (playType === 0) {
+      dispatch({
+        type: "CHANGE_ING",
+        payload: list[index - 1],
+      });
+    }
+
+    if (playType === 1) {
+      const random = getRandom(0, list.length, [index]);
+      dispatch({
+        type: "CHANGE_ING",
+        payload: list[random],
+      });
+    }
+    if (playType === 2) {
+      audio.src = httpTohttps(ing.url);
+      audio.play();
+    }
+  };
+
+  const changePlayType = (type: number) => {
+    setPlayType(type);
+  };
+
+  const renderCurrentTime = (time) =>
+    $(".progress-currentTime").text(
+      `0${parseInt(String(time / 60))}:${
+        parseInt(String(time / 10)) % 6
+      }${parseInt(String(time % 10))}`
+    );
+
+  const goProgress = (e) => {
     const progressBodyEl: any = document.querySelector(".progress-body");
     const time = Math.floor(
       (e.nativeEvent.offsetX / progressBodyEl.clientWidth) * duration
@@ -237,7 +280,7 @@ export default function Player({ onBack, visible }: PlayerType) {
 
     audio.currentTime = time;
     dispatch({ type: "CHANGE_CURRENTTIME", payload: time });
-  }
+  };
 
   return ReactDom.createPortal(
     <div
@@ -285,7 +328,8 @@ export default function Player({ onBack, visible }: PlayerType) {
             <div
               className="progress-body"
               // onMouseDown={onDragProgressMouseDown}
-              onClick={goProgress}
+              // onClick={goProgress}
+              onTouchStart={onTouchProgressMouseDown}
             >
               <div
                 className="current-progress"
