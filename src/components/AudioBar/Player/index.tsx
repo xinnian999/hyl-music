@@ -1,12 +1,10 @@
-import { useBoolean, useMount, useRedux } from "@/hooks";
 import { List, NavBar, Popup } from "antd-mobile";
-import ReactDom from "react-dom";
-import PlayBtn from "../PlayBtn";
-import AlBum from "../AlBum";
-import "./index.less";
-import { Icon } from "@/components";
 import { useEffect, useState } from "react";
-import classNames from "classnames";
+import $ from "jquery";
+import classnames from "classnames";
+import ReactDom from "react-dom";
+import { useBoolean, useMount, useRedux } from "@/hooks";
+import { Icon } from "@/components";
 import {
   getArtist,
   request,
@@ -14,9 +12,10 @@ import {
   getRandom,
   httpTohttps,
 } from "@/utils";
+import PlayBtn from "../PlayBtn";
+import AlBum from "../AlBum";
+import "./index.less";
 import parseLyric from "./parseLyric";
-import classnames from "classnames";
-import $ from "jquery";
 
 type PlayerType = {
   onBack: () => void;
@@ -49,19 +48,10 @@ export default function Player({ onBack, visible }: PlayerType) {
 
     timer = setInterval(() => {
       dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
+      renderCurrentTime(audio.currentTime);
     }, 500);
     audio.play();
   }, [play]);
-
-  useEffect(() => {
-    //播放完成时，根据播放type切换
-    if (currentTime >= duration) {
-      dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
-      next();
-    }
-
-    golrc()
-  }, [currentTime]);
 
   useEffect(() => {
     if (!ing.url) {
@@ -88,14 +78,12 @@ export default function Player({ onBack, visible }: PlayerType) {
   }, [ing]);
 
   useEffect(() => {
-    if (visible) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
+    //播放完成时，切换下一曲
+    if (currentTime >= duration) {
+      dispatch({ type: "CHANGE_CURRENTTIME", payload: 0 });
+      next();
     }
-  }, [visible]);
 
-  const golrc=()=>{
     const active_lrc: any = document.querySelectorAll(".lrc-item-active");
 
     for (const i of active_lrc) {
@@ -106,26 +94,28 @@ export default function Player({ onBack, visible }: PlayerType) {
     if (current_active_lrc) {
       current_active_lrc.classList.add("lrc-item-current");
 
-      $(".lrc").animate(
-        {
-          scrollTop: current_active_lrc.offsetTop - $(".lrc").height() / 2,
-        },
-        500
-      );
+      $(".lrc")
+        .stop()
+        .animate(
+          {
+            scrollTop: current_active_lrc.offsetTop - $(".lrc").height() / 2,
+          },
+          500
+        );
     }
-  }
 
-  const goProgress = (e) => {
-    const progressBodyEl: any = document.querySelector(".progress-body");
-    const time = Math.floor(
-      (e.nativeEvent.offsetX / progressBodyEl.clientWidth) * duration
-    );
+  }, [currentTime]);
 
-    audio.currentTime = time;
-    dispatch({ type: "CHANGE_CURRENTTIME", payload: time });
-  };
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [visible]);
 
   const next = () => {
+    
     const index = list.map((item) => item.id).indexOf(ing.id);
 
     if (playType === 0) {
@@ -149,6 +139,7 @@ export default function Player({ onBack, visible }: PlayerType) {
   };
 
   const last = () => {
+
     const index = list.map((item) => item.id).indexOf(ing.id);
     if (playType === 0) {
       dispatch({
@@ -174,9 +165,73 @@ export default function Player({ onBack, visible }: PlayerType) {
     setPlayType(type);
   };
 
+  const renderCurrentTime = (time) =>
+    $(".progress-currentTime").text(
+      `0${parseInt(String(time / 60))}:${
+        parseInt(String(time / 10)) % 6
+      }${parseInt(String(time % 10))}`
+    );
+
+  const onDragProgressMouseDown = (e) => {
+    e.stopPropagation();
+    
+    document.onselectstart = () => false;
+    document.ondragstart = () => false;
+    clearInterval(timer);
+    let progressX: number;
+
+    progressX = e.clientX - 75;
+
+    // $(".current-progress-head").css("left", progressX);
+    $(".current-progress").css("width", progressX);
+    document.onmousemove = (event) => {
+      event = event || window.event;
+
+      progressX = event.clientX - 75;
+
+      if (progressX <= 0) {
+        progressX = 0;
+      }
+
+      if (progressX >= $(".progress-body").width()) {
+        progressX = $(".progress-body").width() - 1;
+      }
+
+      $(".current-progress").css("width", progressX);
+
+      renderCurrentTime(
+        Math.floor((progressX / $(".progress-body").width()) * duration)
+      );
+    };
+
+    document.onmouseup = function (event) {
+      event = event || window.event;
+      document.onselectstart = null;
+      document.ondragstart = null;
+
+      const time = Math.floor(
+        (progressX / $(".progress-body").width()) * duration
+      );
+
+      audio.currentTime = time;
+
+      timer = setInterval(() => {
+        dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
+        renderCurrentTime(audio.currentTime);
+      }, 500);
+
+      // 取消鼠标移动事件
+      document.onmousemove = null;
+      // 取消鼠标抬起事件
+      document.onmouseup = null;
+
+      return false;
+    };
+  };
+
   return ReactDom.createPortal(
     <div
-      className={classNames(
+      className={classnames(
         "player-contariner",
         "animate__animated  animate__fadeInUp",
         {
@@ -203,7 +258,7 @@ export default function Player({ onBack, visible }: PlayerType) {
 
               return (
                 <div
-                  className={classNames("lrc-item", {
+                  className={classnames("lrc-item", {
                     "lrc-item-active": audio.currentTime * 1000 >= times,
                   })}
                   key={lyric + index}
@@ -216,12 +271,11 @@ export default function Player({ onBack, visible }: PlayerType) {
 
         <div className="control">
           <div className="progress">
-            <span className="progress-currentTime">
-              0{parseInt(String(currentTime / 60))}:
-              {parseInt(String(currentTime / 10)) % 6}
-              {parseInt(String(currentTime % 10))}
-            </span>
-            <div className="progress-body" onClick={goProgress}>
+            <span className="progress-currentTime">00:00</span>
+            <div
+              className="progress-body"
+              onMouseDown={onDragProgressMouseDown}
+            >
               <div
                 className="current-progress"
                 style={{ width: `${(currentTime / duration) * 100}%` }}
