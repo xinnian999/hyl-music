@@ -75,6 +75,7 @@ export default function Player({ onBack, visible }: PlayerType) {
         });
       });
     }
+    document.title=`${ing.name} - 小琳音乐站`
   }, [ing]);
 
   useEffect(() => {
@@ -182,7 +183,6 @@ export default function Player({ onBack, visible }: PlayerType) {
 
     progressX = e.clientX - 75;
 
-    // $(".current-progress-head").css("left", progressX);
     $(".current-progress").css("width", progressX);
     document.onmousemove = (event) => {
       event = event || window.event;
@@ -229,6 +229,16 @@ export default function Player({ onBack, visible }: PlayerType) {
     };
   };
 
+  const goProgress=(e)=>{
+    const progressBodyEl: any = document.querySelector(".progress-body");
+    const time = Math.floor(
+      (e.nativeEvent.offsetX / progressBodyEl.clientWidth) * duration
+    );
+
+    audio.currentTime = time;
+    dispatch({ type: "CHANGE_CURRENTTIME", payload: time });
+  }
+
   return ReactDom.createPortal(
     <div
       className={classnames(
@@ -274,7 +284,8 @@ export default function Player({ onBack, visible }: PlayerType) {
             <span className="progress-currentTime">00:00</span>
             <div
               className="progress-body"
-              onMouseDown={onDragProgressMouseDown}
+              // onMouseDown={onDragProgressMouseDown}
+              onClick={goProgress}
             >
               <div
                 className="current-progress"
