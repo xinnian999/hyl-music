@@ -106,7 +106,7 @@ export default function Player({ onBack, visible }: PlayerType) {
     if (current_active_lrc) {
       current_active_lrc.classList.add("lrc-item-current");
 
-      $(".lrc").animate(
+      $(".lrc").stop().animate(
         {
           scrollTop: current_active_lrc.offsetTop - $(".lrc").height() / 2,
         },
