@@ -39,59 +39,59 @@ export default function Player({ onBack, visible }: PlayerType) {
     }
   });
 
+  //移动端进度条拖拽事件
   const onTouchProgressMouseDown = (e: any) => {
+    const pbWidth = $(".progress-body").width()!;
     let progressX: number;
 
-    const move = (e: any) => {
+    clearInterval(timer);
+    console.log(timer);
+
+    progressX = e.targetTouches[0].pageX - 75;
+
+    $(".current-progress").css("width", progressX);
+
+    document.ontouchmove = (e: any) => {
       progressX = e.targetTouches[0].pageX - 75;
 
       if (progressX <= 0) {
         progressX = 0;
       }
 
-      if (progressX >= $(".progress-body").width()) {
-        progressX = $(".progress-body").width() - 1;
+      if (progressX >= pbWidth) {
+        progressX = pbWidth;
       }
 
       $(".current-progress").css("width", progressX);
 
-      renderCurrentTime(
-        Math.floor((progressX / $(".progress-body").width()) * duration)
-      );
+      renderCurrentTime(Math.floor((progressX / pbWidth) * duration));
     };
 
-    const end = (e: any) => {
-      const time = Math.floor(
-        (progressX / $(".progress-body").width()) * duration
-      );
-
-      if (time) audio.currentTime = time;
+    document.ontouchend = () => {
+      audio.currentTime = Math.floor((progressX / pbWidth) * duration);
 
       timer = setInterval(() => {
         dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
+        console.log(666);
+
         renderCurrentTime(audio.currentTime);
       }, 500);
+      // dispatch({ type: "CHANGE_PlAY", payload: true });
 
       document.ontouchmove = null;
       document.ontouchend = null;
     };
-
-    clearInterval(timer);
-    progressX = e.targetTouches[0].pageX - 75;
-
-    $(".current-progress").css("width", progressX);
-
-    document.ontouchmove = move;
-    document.ontouchend = end;
   };
 
-  const onDragProgressMouseDown = (e) => {
+  //pc端进度条拖拽事件
+  const onDragProgressMouseDown = (e: any) => {
     e.stopPropagation();
+    const pbWidth = $(".progress-body").width()!;
+    let progressX: number;
 
     document.onselectstart = () => false;
     document.ondragstart = () => false;
     clearInterval(timer);
-    let progressX: number;
 
     progressX = e.clientX - 75;
 
@@ -105,15 +105,13 @@ export default function Player({ onBack, visible }: PlayerType) {
         progressX = 0;
       }
 
-      if (progressX >= $(".progress-body").width()) {
-        progressX = $(".progress-body").width() - 1;
+      if (progressX >= pbWidth) {
+        progressX = pbWidth - 1;
       }
 
       $(".current-progress").css("width", progressX);
 
-      renderCurrentTime(
-        Math.floor((progressX / $(".progress-body").width()) * duration)
-      );
+      renderCurrentTime(Math.floor((progressX / pbWidth) * duration));
     };
 
     document.onmouseup = function (event) {
@@ -121,16 +119,14 @@ export default function Player({ onBack, visible }: PlayerType) {
       document.onselectstart = null;
       document.ondragstart = null;
 
-      const time = Math.floor(
-        (progressX / $(".progress-body").width()) * duration
-      );
-
-      audio.currentTime = time;
+      audio.currentTime = Math.floor((progressX / pbWidth) * duration);
 
       timer = setInterval(() => {
         dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
         renderCurrentTime(audio.currentTime);
       }, 500);
+
+      // dispatch({ type: "CHANGE_PlAY", payload: true });
 
       // 取消鼠标移动事件
       document.onmousemove = null;
@@ -272,16 +268,6 @@ export default function Player({ onBack, visible }: PlayerType) {
       }${parseInt(String(time % 10))}`
     );
 
-  const goProgress = (e) => {
-    const progressBodyEl: any = document.querySelector(".progress-body");
-    const time = Math.floor(
-      (e.nativeEvent.offsetX / progressBodyEl.clientWidth) * duration
-    );
-
-    audio.currentTime = time;
-    dispatch({ type: "CHANGE_CURRENTTIME", payload: time });
-  };
-
   return ReactDom.createPortal(
     <div
       className={classnames(
@@ -326,16 +312,17 @@ export default function Player({ onBack, visible }: PlayerType) {
           <div className="progress">
             <span className="progress-currentTime">00:00</span>
             <div
-              className="progress-body"
-              // onMouseDown={onDragProgressMouseDown}
-              // onClick={goProgress}
+              className="progress-main"
               onTouchStart={onTouchProgressMouseDown}
+              onMouseDown={onDragProgressMouseDown}
             >
-              <div
-                className="current-progress"
-                style={{ width: `${(currentTime / duration) * 100}%` }}
-              >
-                <span className="current-progress-head"></span>
+              <div className="progress-body">
+                <div
+                  className="current-progress"
+                  style={{ width: `${(currentTime / duration) * 100}%` }}
+                >
+                  <span className="current-progress-head"></span>
+                </div>
               </div>
             </div>
             <span className="progress-durationTime">

@@ -35,7 +35,7 @@ export default function Layout() {
     if (!cookie.get("MUSIC_U")) {
       cookie.set(
         "MUSIC_U",
-        "bd1ea5d40e983b3d8028bcff22f35610f3850cd78108b09cc99953d869a4611c993166e004087dd370fc28c54e5e1bb43e9807d4b9f01ed20533926d55b6e50333aa127376130d47a0d2166338885bd7",
+        "bd1ea5d40e983b3d8028bcff22f35610780b772014e079de7c5aec49dfbde313993166e004087dd394cae6c3eb6616fbf0faf199ca1046f30533926d55b6e50333aa127376130d47a0d2166338885bd7",
         { expires: 30 }
       );
     }
