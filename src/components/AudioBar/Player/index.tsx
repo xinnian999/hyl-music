@@ -41,15 +41,16 @@ export default function Player({ onBack, visible }: PlayerType) {
 
   //移动端进度条拖拽事件
   const onTouchProgressMouseDown = (e: any) => {
+    e.stopPropagation();
     const pbWidth = $(".progress-body").width()!;
     let progressX: number;
 
     clearInterval(timer);
-    console.log(timer);
 
     progressX = e.targetTouches[0].pageX - 75;
 
     $(".current-progress").css("width", progressX);
+    renderCurrentTime(Math.floor((progressX / pbWidth) * duration));
 
     document.ontouchmove = (e: any) => {
       progressX = e.targetTouches[0].pageX - 75;
@@ -72,11 +73,10 @@ export default function Player({ onBack, visible }: PlayerType) {
 
       timer = setInterval(() => {
         dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
-        console.log(666);
-
         renderCurrentTime(audio.currentTime);
       }, 500);
-      // dispatch({ type: "CHANGE_PlAY", payload: true });
+
+      dispatch({ type: "CHANGE_PlAY", payload: true });
 
       document.ontouchmove = null;
       document.ontouchend = null;
@@ -86,6 +86,8 @@ export default function Player({ onBack, visible }: PlayerType) {
   //pc端进度条拖拽事件
   const onDragProgressMouseDown = (e: any) => {
     e.stopPropagation();
+    console.log("pc");
+
     const pbWidth = $(".progress-body").width()!;
     let progressX: number;
 
@@ -96,6 +98,8 @@ export default function Player({ onBack, visible }: PlayerType) {
     progressX = e.clientX - 75;
 
     $(".current-progress").css("width", progressX);
+    renderCurrentTime(Math.floor((progressX / pbWidth) * duration));
+
     document.onmousemove = (event) => {
       event = event || window.event;
 
@@ -126,7 +130,7 @@ export default function Player({ onBack, visible }: PlayerType) {
         renderCurrentTime(audio.currentTime);
       }, 500);
 
-      // dispatch({ type: "CHANGE_PlAY", payload: true });
+      dispatch({ type: "CHANGE_PlAY", payload: true });
 
       // 取消鼠标移动事件
       document.onmousemove = null;
@@ -140,14 +144,18 @@ export default function Player({ onBack, visible }: PlayerType) {
   useEffect(() => {
     if (!play) {
       clearInterval(timer);
+      timer = null;
+
       audio.pause();
       return;
     }
 
-    timer = setInterval(() => {
-      dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
-      renderCurrentTime(audio.currentTime);
-    }, 500);
+    if (!timer)
+      timer = setInterval(() => {
+        dispatch({ type: "CHANGE_CURRENTTIME", payload: audio.currentTime });
+        renderCurrentTime(audio.currentTime);
+      }, 500);
+
     audio.play();
   }, [play]);
 
@@ -261,7 +269,7 @@ export default function Player({ onBack, visible }: PlayerType) {
     setPlayType(type);
   };
 
-  const renderCurrentTime = (time) =>
+  const renderCurrentTime = (time: number) =>
     $(".progress-currentTime").text(
       `0${parseInt(String(time / 60))}:${
         parseInt(String(time / 10)) % 6
