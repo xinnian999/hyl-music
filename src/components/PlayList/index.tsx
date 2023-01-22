@@ -1,7 +1,8 @@
-import { Button, DotLoading, List, Popover } from "antd-mobile";
+import { Button, DotLoading, List, Popover, Space, Toast } from "antd-mobile";
 import { getArtist, httpTohttps, request, scrollIntoView } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
+import { copy } from "hyl-utils";
 import "./index.less";
 
 type playListType = {
@@ -31,7 +32,9 @@ function PlayList({ dataSource }: playListType) {
 
   const downloadItem = async (item) => {
     const res = await request.get("/song/url", { params: { id: item.id } });
-
+    Toast.show({
+      content: "下载中，请稍后在下载列表查看",
+    });
     fetch(httpTohttps(res.data[0].url)).then((res) =>
       res.blob().then((blob) => {
         let a = document.createElement("a");
@@ -42,6 +45,16 @@ function PlayList({ dataSource }: playListType) {
         window.URL.revokeObjectURL(url);
       })
     );
+  };
+
+  const share = (item) => {
+    Toast.show({
+      content: "已复制分享链接到剪切板",
+      afterClose: () => {
+        console.log(item.id);
+      },
+    });
+    copy(`https://hyl999.co:85/hot?playId=${item.id}&audio=0`);
   };
 
   const playingBar = (
@@ -75,9 +88,17 @@ function PlayList({ dataSource }: playListType) {
               arrow={
                 <Popover
                   content={
-                    <Button color="primary" onClick={() => downloadItem(item)}>
-                      下载
-                    </Button>
+                    <Space direction="vertical">
+                      <Button
+                        color="primary"
+                        onClick={() => downloadItem(item)}
+                      >
+                        下载
+                      </Button>
+                      <Button color="primary" onClick={() => share(item)}>
+                        分享
+                      </Button>
+                    </Space>
                   }
                   trigger="click"
                   placement="bottom"

@@ -31,14 +31,11 @@ export default function Layout() {
   useEffect(() => {
     setActiveKey(location.pathname);
 
-    //种植会员token
-    if (!cookie.get("MUSIC_U")) {
-      cookie.set(
-        "MUSIC_U",
-        "bd1ea5d40e983b3d8028bcff22f35610780b772014e079de7c5aec49dfbde313993166e004087dd394cae6c3eb6616fbf0faf199ca1046f30533926d55b6e50333aa127376130d47a0d2166338885bd7",
-        { expires: 30 }
-      );
-    }
+    cookie.set(
+      "MUSIC_U",
+      "bd1ea5d40e983b3d8028bcff22f35610f8b13c55b61f93cdc9c5912c02e20890993166e004087dd3321b23742d7dcdbfe8d11a232c00078e0533926d55b6e50333aa127376130d47a0d2166338885bd7",
+      { expires: 30 }
+    );
   }, [location.pathname]);
 
   return (
