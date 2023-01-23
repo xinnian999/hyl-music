@@ -2,12 +2,16 @@ import { Button, DotLoading, List, Popover, Space, Toast } from "antd-mobile";
 import { getArtist, httpTohttps, request, scrollIntoView } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
-import { copy } from "hyl-utils";
+import { copy, Url } from "hyl-utils";
 import "./index.less";
 
 type playListType = {
   dataSource: any[];
 };
+
+// console.log(
+//   Url.getParams("https://hyl999.co:85/hot?playId=1974443814&audio=0")
+// );
 
 function PlayList({ dataSource }: playListType) {
   const { store, dispatchAll } = useRedux();
@@ -50,11 +54,15 @@ function PlayList({ dataSource }: playListType) {
   const share = (item) => {
     Toast.show({
       content: "已复制分享链接到剪切板",
-      afterClose: () => {
-        console.log(item.id);
-      },
+      afterClose: () => {},
     });
-    copy(`https://hyl999.co:85/hot?playId=${item.id}&audio=0`);
+    // copy(`https://hyl999.co:85/hot?playId=${item.id}&audio=0`);
+    copy(
+      `https://hyl999.co:85/hot?${Url.spliceParams({
+        playId: item.id,
+        audio: 0,
+      })}`
+    );
   };
 
   const playingBar = (
