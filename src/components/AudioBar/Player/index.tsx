@@ -16,6 +16,7 @@ import PlayBtn from "../PlayBtn";
 import AlBum from "../AlBum";
 import "./index.less";
 import parseLyric from "./parseLyric";
+import { Url } from "hyl-utils";
 
 type PlayerType = {
   onBack: () => void;
@@ -25,7 +26,7 @@ type PlayerType = {
 let timer: any;
 
 export default function Player({ onBack, visible }: PlayerType) {
-  const { store, dispatch } = useRedux();
+  const { store, dispatch, dispatchAll } = useRedux();
   const { ing, play, audio, currentTime, list } = store;
   const duration = Math.floor(ing.time / 1000);
   const [playType, setPlayType] = useState(0);
@@ -35,7 +36,22 @@ export default function Player({ onBack, visible }: PlayerType) {
   useMount(() => {
     if (ing.url) {
       audio.src = httpTohttps(ing.url);
-      audio.autoplay = true;
+      if (play) audio.autoplay = true;
+    }
+
+    const { playId } = Url.getParams();
+
+    if (playId) {
+      (async () => {
+        const detail = await request.get("/song/detail", {
+          params: { ids: playId },
+        });
+        dispatch({
+          type: "CHANGE_ING",
+          payload: detail.songs[0],
+        });
+        if (play) dispatch({ type: "CHANGE_PlAY", payload: true });
+      })();
     }
   });
 
@@ -160,6 +176,8 @@ export default function Player({ onBack, visible }: PlayerType) {
   }, [play]);
 
   useEffect(() => {
+    Url.setParams({ playId: ing.id });
+
     if (!ing.url) {
       request.get("/song/url", { params: { id: ing.id } }).then((res) => {
         if (!res.data[0].url) return next();
@@ -215,8 +233,10 @@ export default function Player({ onBack, visible }: PlayerType) {
   useEffect(() => {
     if (visible) {
       document.body.style.overflow = "hidden";
+      Url.setParams({ audioVisible: "0" });
     } else {
       document.body.style.overflow = "auto";
+      Url.setParams({ audioVisible: "1" });
     }
   }, [visible]);
 

@@ -9,10 +9,6 @@ type playListType = {
   dataSource: any[];
 };
 
-// console.log(
-//   Url.getParams("https://hyl999.co:85/hot?playId=1974443814&audio=0")
-// );
-
 function PlayList({ dataSource }: playListType) {
   const { store, dispatchAll } = useRedux();
 
@@ -56,12 +52,12 @@ function PlayList({ dataSource }: playListType) {
       content: "已复制分享链接到剪切板",
       afterClose: () => {},
     });
-    // copy(`https://hyl999.co:85/hot?playId=${item.id}&audio=0`);
+
     copy(
-      `https://hyl999.co:85/hot?${Url.spliceParams({
+      Url.spliceParams({
         playId: item.id,
-        audio: 0,
-      })}`
+        audioVisible: 0,
+      })
     );
   };
 
