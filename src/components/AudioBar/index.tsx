@@ -16,7 +16,7 @@ export default function AudioBar() {
   useMount(() => {
     dispatch({ type: "CHANGE_AUDIO", payload: new Audio() });
     const { audioVisible } = Url.getParams();
-    if (audioVisible === "0") on();
+    if (audioVisible) on();
   });
 
   if (!ing.name) return null;

@@ -16,7 +16,7 @@ export type isStore = {
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["currentTime"], //设置某个reducer数据不持久化，
+  blacklist: ["currentTime", "play"], //设置某个reducer数据不持久化，
 };
 
 const reducer = (

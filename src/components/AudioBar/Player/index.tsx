@@ -26,7 +26,7 @@ type PlayerType = {
 let timer: any;
 
 export default function Player({ onBack, visible }: PlayerType) {
-  const { store, dispatch, dispatchAll } = useRedux();
+  const { store, dispatch } = useRedux();
   const { ing, play, audio, currentTime, list } = store;
   const duration = Math.floor(ing.time / 1000);
   const [playType, setPlayType] = useState(0);
@@ -36,7 +36,6 @@ export default function Player({ onBack, visible }: PlayerType) {
   useMount(() => {
     if (ing.url) {
       audio.src = httpTohttps(ing.url);
-      if (play) audio.autoplay = true;
     }
 
     const { playId } = Url.getParams();
@@ -50,7 +49,7 @@ export default function Player({ onBack, visible }: PlayerType) {
           type: "CHANGE_ING",
           payload: detail.songs[0],
         });
-        if (play) dispatch({ type: "CHANGE_PlAY", payload: true });
+        Url.setParams({}, { async: true, url: window.location.origin });
       })();
     }
   });
@@ -161,6 +160,7 @@ export default function Player({ onBack, visible }: PlayerType) {
     if (!play) {
       clearInterval(timer);
       timer = null;
+      audio.autoplay = false;
 
       audio.pause();
       return;
@@ -173,11 +173,10 @@ export default function Player({ onBack, visible }: PlayerType) {
       }, 500);
 
     audio.play();
+    audio.autoplay = true;
   }, [play]);
 
   useEffect(() => {
-    Url.setParams({ playId: ing.id });
-
     if (!ing.url) {
       request.get("/song/url", { params: { id: ing.id } }).then((res) => {
         if (!res.data[0].url) return next();
@@ -233,10 +232,8 @@ export default function Player({ onBack, visible }: PlayerType) {
   useEffect(() => {
     if (visible) {
       document.body.style.overflow = "hidden";
-      Url.setParams({ audioVisible: "0" });
     } else {
       document.body.style.overflow = "auto";
-      Url.setParams({ audioVisible: "1" });
     }
   }, [visible]);
 
