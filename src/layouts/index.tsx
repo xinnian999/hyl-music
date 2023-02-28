@@ -36,7 +36,7 @@ export default function Layout() {
 
   useMount(() => {
     ajax.get("/hyl/globalConfig.json").then((res) => {
-      cookie.set("MUSIC_U", res.response["wyy-vip"], { expires: 30 });
+      cookie.set("MUSIC_U", res.response["wyy-vip"], { expires: 8640000 });
     });
   });
 
