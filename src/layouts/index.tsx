@@ -7,7 +7,9 @@ import { PersistGate } from "redux-persist/integration/react";
 import { AudioBar } from "@/components";
 import "animate.css";
 import "./index.less";
-import cookie from "js-cookie";
+import { cookie, ajax } from "hyl-utils";
+import axios from "axios";
+import { useMount } from "@/hooks";
 
 const tabs = [
   {
@@ -30,13 +32,13 @@ export default function Layout() {
 
   useEffect(() => {
     setActiveKey(location.pathname);
-
-    cookie.set(
-      "MUSIC_U",
-      "bd1ea5d40e983b3d8028bcff22f35610f8b13c55b61f93cdc9c5912c02e20890993166e004087dd3321b23742d7dcdbfe8d11a232c00078e0533926d55b6e50333aa127376130d47a0d2166338885bd7",
-      { expires: 30 }
-    );
   }, [location.pathname]);
+
+  useMount(() => {
+    ajax.get("/hyl/globalConfig.json").then((res) => {
+      cookie.set("MUSIC_U", res.response["wyy-vip"], { expires: 30 });
+    });
+  });
 
   return (
     <>

@@ -2,7 +2,7 @@ import { Button, DotLoading, List, Popover, Space, Toast } from "antd-mobile";
 import { getArtist, httpTohttps, request, scrollIntoView } from "@/utils";
 import { useRedux } from "@/hooks";
 import classnames from "classnames";
-import { copy, Url } from "hyl-utils";
+import { copy, url } from "hyl-utils";
 import "./index.less";
 
 type playListType = {
@@ -54,7 +54,7 @@ function PlayList({ dataSource }: playListType) {
     });
 
     copy(
-      Url.spliceParams({
+      url.spliceParams({
         playId: item.id,
         audioVisible: 0,
       })

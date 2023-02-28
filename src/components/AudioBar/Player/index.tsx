@@ -16,7 +16,7 @@ import PlayBtn from "../PlayBtn";
 import AlBum from "../AlBum";
 import "./index.less";
 import parseLyric from "./parseLyric";
-import { Url } from "hyl-utils";
+import { url } from "hyl-utils";
 
 type PlayerType = {
   onBack: () => void;
@@ -38,7 +38,7 @@ export default function Player({ onBack, visible }: PlayerType) {
       audio.src = httpTohttps(ing.url);
     }
 
-    const { playId } = Url.getParams();
+    const { playId } = url.getParams();
 
     if (playId) {
       (async () => {
@@ -49,7 +49,7 @@ export default function Player({ onBack, visible }: PlayerType) {
           type: "CHANGE_ING",
           payload: detail.songs[0],
         });
-        Url.setParams({}, { async: true, url: window.location.origin });
+        url.setParams({}, { async: true, url: window.location.origin });
       })();
     }
   });

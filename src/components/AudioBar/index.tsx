@@ -4,7 +4,7 @@ import Player from "./Player";
 import PlayBtn from "./PlayBtn";
 import AlBum from "./AlBum";
 import "./index.less";
-import { Url } from "hyl-utils";
+import { url } from "hyl-utils";
 
 export default function AudioBar() {
   const [visible, on, off] = useBoolean(false);
@@ -15,7 +15,7 @@ export default function AudioBar() {
 
   useMount(() => {
     dispatch({ type: "CHANGE_AUDIO", payload: new Audio() });
-    const { audioVisible } = Url.getParams();
+    const { audioVisible } = url.getParams();
     if (audioVisible) on();
   });
 

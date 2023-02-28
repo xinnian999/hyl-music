@@ -8,6 +8,11 @@ export default defineConfig({
       changeOrigin: true,
       pathRewrite: { "^/api": "" },
     },
+    "/hyl": {
+      target: "https://www.hyl999.co:7777/",
+      changeOrigin: true,
+      pathRewrite: { "^/hyl": "" },
+    },
   },
   mfsu: false,
   routes: [
